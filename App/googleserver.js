@@ -25,46 +25,6 @@ function hashString(str) {
   return hash;
 }
 
-// Canvas Fingerprinting
-function generateCanvasFingerprint() {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.textBaseline = "top";
-  ctx.font = "14px 'Arial'";
-  ctx.fillText('Hello World!', 2, 2);
-  const data = canvas.toDataURL();
-  return hashString(data);
-}
-
-// WebGL Fingerprinting
-function getWebGLFingerprint() {
-  const canvas = document.createElement('canvas');
-  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-  const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-  const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-  const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-  return hashString(renderer + vendor);
-}
-
-// Store the fixed font list at the time of registration
-const fixedFontList = [
-  "Arial", "Verdana", "Courier New", "Georgia", "Times New Roman", "Tahoma", "Trebuchet MS"
-];
-
-// Gathering all data for fingerprint
-function generateFingerprint() {
-  const userAgent = navigator.userAgent;
-  const platform = navigator.platform;
-  const screenRes = `${screen.width}x${screen.height}`;
-  const fonts = fixedFontList.join(','); // Use the fixed font list
-  const canvasFingerprint = generateCanvasFingerprint();
-  const webglFingerprint = getWebGLFingerprint();
-
-  const fingerprintData = `${userAgent}-${platform}-${screenRes}-${fonts}-${canvasFingerprint}-${webglFingerprint}`;
-  return hashString(fingerprintData);
-}
-
-// Display fingerprint
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -72,14 +32,7 @@ const auth = getAuth(app);
 const db = getFirestore(app); // Initialize Firestore
 
 // Function to generate a unique device identifier
-function generateDeviceID() {
-  const userAgent = navigator.userAgent; // User's browser/device info
-  const platform = navigator.platform; // OS/platform info
-  const randomSalt = "random_salt_value"; // Add a salt for uniqueness
-  const rawID = `${userAgent}-${platform}-${randomSalt}`;
-  // const rawID=`${userAgent}`;
-  return btoa(rawID); // Encode to create a unique identifier
-}
+
 
 // Function to handle Google Sign-In
 async function handleSignIn() {
@@ -116,15 +69,13 @@ async function handleSignIn() {
       // Generate the current device ID
 
       if (userDoc.exists()) {
-        // const biometricSuccess = await verifyBiometric();
+        const biometricSuccess = await verifyBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     return; // ❌ Prevent redirection if biometric fails
-        //   }  
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            return; // ❌ Prevent redirection if biometric fails
+          }  
         const userData = userDoc.data();
-        const finger=generateFingerprint();
-        console.log(finger);
         console.log(userData.DeviceId);
 
 
@@ -135,7 +86,6 @@ async function handleSignIn() {
     
      
       } else {
-        const fingerprint = generateFingerprint();
         const biometricSuccess = await registerBiometric();
     
         if (!biometricSuccess) {
@@ -150,7 +100,6 @@ async function handleSignIn() {
           EmployeeID: user.email.replace("@gmail.com", ""),
           Role: cmpdata.Role,
           Company: companyName,
-          DeviceId:fingerprint,
           Dob:cmpdata.Dob,
           mobileNumber:cmpdata.mobile, // Store the device ID
         };
@@ -221,12 +170,12 @@ async function handleSignIn() {
         
       }else{
         // / Log successful login in Firestore
-        // const biometricSuccess = await verifyBiometric();
+        const biometricSuccess = await verifyBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     return; // ❌ Prevent redirection if biometric fails
-        //   }  
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            return; // ❌ Prevent redirection if biometric fails
+          }  
       // Save UID in sessionStorage
       sessionStorage.setItem('userEmail', user.email);
       sessionStorage.setItem('company',companyName);
