@@ -1,0 +1,260 @@
+.e1 {
+    display: flex; /* Enable flexbox */
+    flex-direction: row; /* Arrange items side by side */
+    /* align-items: center; Vertically align the items */
+    /* justify-content:center; */
+    margin-top: 20px;
+    /* height: 100vh; Full viewport height to center vertically */
+}
+
+#empid {
+    width: 22%;
+    height: 40px;
+    border: 0px;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+    box-sizing: border-box;
+    border-bottom: none;
+    outline: 0;
+    /* font-size: 17px; */
+    float: left;
+    font-family: sans-serif;
+
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: bold;
+    margin-left: 1%;
+}
+#rocket{
+    
+ 
+        max-width: 80%;
+        max-height: 80%;
+        /* padding-left: 20px; */
+        padding-top: 2px;
+        
+}
+#rocket:hover{
+    transform: scale(1.1) ;/* Rotate on hover */
+transition: transform 0.6s ease;
+}
+#empid:focus {
+    border-bottom: none;
+  }
+  @media (max-width: 768px){
+    #search {
+        width: 50%;
+        height: 40px;
+        border: 0px;
+        border-top-right-radius: 7px;
+        border-bottom-right-radius: 7px;
+        box-sizing: border-box;
+        background-color: aliceblue;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    }
+    .portion{
+        /* display: block;
+        fl */
+        flex-direction: column;
+        /* background-color: pink; */
+    }
+
+    #rocket{
+    
+ 
+        max-width: 80%;
+        max-height: 80%;
+        /* padding-left: 20px; */
+        padding-top: 2px;
+        
+}
+
+        #empid{
+        width: 80%;
+    height: 40px;
+    border: 0px;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+    box-sizing: border-box;
+    border-bottom: none;
+    outline: 0;
+    /* font-size: 17px; */
+    float: left;
+    font-family: sans-serif;
+
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: bold;
+    margin-left: 1%;
+    }
+    
+  }
+
+  #fel{
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-family: "Goldman", serif;
+
+  }
+
+  @keyframes shake {
+    
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+  }
+
+#search {
+    width: 5%;
+    height: 40px;
+    border: 0px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    box-sizing: border-box;
+    background-color: aliceblue;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.profile-form {
+    display: flex;
+    flex-direction: column; /* Stack the profile items vertically */
+    gap: 10px;
+    width: 100%;
+    height: 85%;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-item {
+    display: flex; /* Align label and p on the same row */
+    align-items: center; /* Vertically center the label and paragraph */
+    justify-content: flex-start; /* Ensure they align horizontally */
+    gap: 30px; /* Space between label and paragraph */
+    flex-wrap: wrap; /* Ensure that items don't break when the container is too small */
+}
+.portion{
+    /* display: block;
+    fl */
+    display: flex;
+    /* background-color: pink; */
+}
+
+.profile-form label {
+    font-size: 1.2rem;
+    font-weight: 1000;
+    font-family: "Goldman", serif;
+    color: #333;
+}
+
+.profile-item p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: bold;
+}
+
+/* Hover effect on the paragraph */
+.profile-item p:hover {
+    background-color: #eceff1;
+    /* border-color: #67aaf1; */
+    /* transform: translateY(-2px); */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+}
+
+/* Add hover effect on the entire form */
+.profile-form:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+#profile1 {
+    /* padding-top: 10%; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* max-width:70%; */
+    /* display: none; */
+    overflow: scroll;
+    scrollbar-width:none;
+    /* height: auto; */
+    height: 500px;
+    width: 27%;
+    /* margin: auto; */
+    margin-left: 1%;
+    /* margin-top: 0px; */
+    text-align: center;
+    font-family: arial;
+    background-color: #fff;
+    /* padding: 20px; */
+    padding-top: 0px;
+
+    margin-top:2.3%;
+ 
+    border-radius: 8px;
+    transition: opacity 0.3s ease-in-out; /* For smooth transition */
+    object-fit: cover;
+
+
+    /* height: auto; */
+    transition: opacity 0.5s ease; /* Smooth fade effect */
+
+  }
+  #userName {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .profiledetails {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+
+  }
+  #userPhoto {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: opacity 0.3s ease-in-out; /* For smooth transition */
+    opacity: 0;  /* Start with invisible image */
+    border-radius: 50%;
+    /* margin-bottom: 20px; */
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-left: 30%;
+    margin-top: 10%;
+  }
+
+
+  #freeze{
+    background-color:antiquewhite;
+    font-size: 1rem;
+    font-weight: bold;
+    color:#333;
+    justify-content: center;
+    align-content: center;
+    height: 40px;
+    border-radius: 8px;
+    width: 150px;
+    margin-left: 60%;
+    padding-left: 5px;
+    
+
+  }
+  #freeze:hover{
+    font-size: 1.01rem;
+    color:#555;
+    transform: scale(1.02); /* Slight zoom effect */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
+    border: none;  
+  }
+ 
