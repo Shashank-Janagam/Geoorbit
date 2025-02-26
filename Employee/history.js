@@ -70,6 +70,8 @@ if (!userEmail) {
         let statusColor = "green"; // Default to green
               if (data.Status === "Absent") {
                 statusColor = "red";
+              }else if(data.Status==="On Leave"){
+                statusColor="orange";
               }
         tableRows += `
           <tr>
