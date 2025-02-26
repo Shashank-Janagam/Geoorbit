@@ -247,11 +247,28 @@ async function logAttendance() {
             }else{
               if(attendanceDoc.data().Status=="Absent"){
                 window.location.href="Absent.html";
+              }else if(attendanceDoc.data().Status=="On Leave"){
+                sendEmail(userData.email,userData.name);
+                const attendanceData = {
+                  Name:userData.name,
+                  EmployeeID: userData.EmployeeID,
+                  Role: userData.Role,
+                  Date: formattedDate,
+                  Date2:date,
+                  Status:"Present",
+                  Firstlogin:time,
+                  Lastlogin:time,
+                };
+  
+                await setDoc(doc(db, collectionName, docId), attendanceData);
+
+                
               }else{
               console.log("alredy updated");
               console.log(formattedDate);
               
               await setDoc(attendanceDocRef,{Lastlogin:time},{merge:true});
+
               console.log("Attendance updated successfully with new time!");
               document.getElementById('result').textContent="Already attended"
 
