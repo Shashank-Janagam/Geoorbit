@@ -25,6 +25,7 @@ const db = getFirestore(app); // Initialize Firestore
 const userEmail = sessionStorage.getItem('userEmail');
 let presentCount=0;
 let absentCount=0;
+let leave=0;
 if (!userEmail) {
   console.log("No user is authenticated!");
   alert("Please sign in to proceed.");
@@ -64,6 +65,8 @@ if (!userEmail) {
           presentCount++;
       } else if (data.Status === "Absent") {
           absentCount++;
+      }else{
+        leave++;
       }
         
         // Build table rows
@@ -124,10 +127,10 @@ function drawChart(present, absent) {
   new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Present', 'Absent'],
+      labels: ['Present', 'Absent','On Leave'],
       datasets: [{
-        data: [present, absent],
-        backgroundColor: ['#2D79F3', '#F39C12'], // Colors for Present & Absent
+        data: [present, absent,leave],
+        backgroundColor: ['#2D79F3', '#F39C12','green'], // Colors for Present & Absent
         borderWidth: 2, // You can adjust the thickness if needed
         borderColor: ['rgba(0,0,0,0)', 'rgba(0,0,0,0)'], // Transparent Borders
       }]
