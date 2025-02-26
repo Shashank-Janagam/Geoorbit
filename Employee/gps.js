@@ -243,8 +243,8 @@ async function logAttendance() {
 
               await setDoc(doc(db, collectionName, docId), attendanceData);
               console.log("Attendance logged successfully!");
+              sendEmail(userData.email,userData.name);
             }else{
-
               if(attendanceDoc.data().Status=="Absent"){
                 window.location.href="Absent.html";
               }else{
@@ -291,7 +291,26 @@ async function logAttendance() {
     // Display the user details...
   }
 
+  (function() {
+    emailjs.init("HCjaEIZOneTx9xkek"); // Replace with your EmailJS User ID
+})();
 
+function sendEmail(to,name) {
+    const subject = "Regarding Your Presence";
+    const message = "Your Attendance marked Successfully..!";
+    console.log("Mail sent");
+    const templateParams = {
+        name:name,
+        to_email: to,
+        subject: subject,
+        message: message,
+    };
+
+    emailjs.send("service_x561nxp", "template_hf5tx8c", templateParams)
+        .then(response => {
+        }, error => {
+        });
+}
 
 // }, 10000); // 10000 milliseconds = 10 seconds
 
