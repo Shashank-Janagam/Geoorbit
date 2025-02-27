@@ -69,12 +69,12 @@ async function handleSignIn() {
       // Generate the current device ID
 
       if (userDoc.exists()) {
-        const biometricSuccess = await verifyBiometric();
+        // const biometricSuccess = await verifyBiometric();
     
-        if (!biometricSuccess) {
-            alert("Biometric registration failed. Please try again.");
-            return; // ❌ Prevent redirection if biometric fails
-          }  
+        // if (!biometricSuccess) {
+        //     alert("Biometric registration failed. Please try again.");
+        //     return; // ❌ Prevent redirection if biometric fails
+        //   }  
         const userData = userDoc.data();
         console.log(userData.DeviceId);
 
