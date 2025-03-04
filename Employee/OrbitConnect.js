@@ -402,21 +402,21 @@ async function listenForUserMessages() {
         const q = query(chatRoomsRef);
 
         const querySnapshot = await getDocs(q);
-        console.log("Total chat rooms found:", querySnapshot.size);
+        // console.log("Total chat rooms found:", querySnapshot.size);
 
         querySnapshot.forEach((chatRoomDoc) => {
             const chatRoomID = chatRoomDoc.id;
             const chatRoomData = chatRoomDoc.data();
 
             if (chatRoomData.members && chatRoomData.members.includes(userData.EmployeeID)) {
-                console.log("Listening for messages in chat room:", chatRoomID);
+                // console.log("Listening for messages in chat room:", chatRoomID);
 
                 const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
                 onSnapshot(query(messagesRef, orderBy("timestamp", "asc")), async (snapshot) => {
                     snapshot.docChanges().forEach(async (change) => {
                         if (change.type === "added") {
                             const messageData = change.doc.data();
-                            console.log("New message received:", messageData);
+                            // console.log("New message received:", messageData);
                             setTimeout(async () => {},5000);
 
                             if (messageData.receiverID === userData.EmployeeID && !messageData.read && chatRoomID!=cchat && !messageData.notified) {
@@ -507,7 +507,7 @@ const unsubscribe = db.collection("messages")
   .onSnapshot(snapshot => {
     snapshot.docChanges().forEach(change => {
       if (change.type === "added") {
-        console.log("New message: ", change.doc.data());
+        // console.log("New message: ", change.doc.data());
       }
     });
   });

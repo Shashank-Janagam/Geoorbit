@@ -324,7 +324,9 @@ async function verifyBiometric() {
       }
 
       console.log("Biometric verification successful!");
-      window.location.href = "/Employee/home.html"; // ✅ Redirect after success
+      window.location.href = "/Employee/home.html"; //
+      //  ✅ Redirect after success
+      sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
       return true;
   } catch (error) {
       console.error("Biometric authentication failed:", error);
