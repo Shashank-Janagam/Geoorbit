@@ -47,7 +47,7 @@ function checkAndAuthenticate() {
     }
 }
 
-setInterval(checkAndAuthenticate, 200000);
+setInterval(checkAndAuthenticate, 20000);
 
 
 
