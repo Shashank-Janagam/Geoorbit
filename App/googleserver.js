@@ -2,6 +2,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
 import { getAuth, signOut,GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, collection, getDocs, query, where, setDoc, addDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+import * as faceapi from "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/+esm";
 
 // Replace with your actual Firebase configuration
 const firebaseConfig = {
@@ -14,16 +15,6 @@ const firebaseConfig = {
   appId: "1:807202826514:web:5630f581f6f9dff46aebcb",
   measurementId: "G-H15DN69132"
 };
-
-
-function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
-}
 
 
 // Initialize Firebase
@@ -69,12 +60,19 @@ async function handleSignIn() {
       // Generate the current device ID
 
       if (userDoc.exists()) {
-        const biometricSuccess = await verifyBiometric();
+        // const biometricSuccess = await verifyBiometric();
     
-        if (!biometricSuccess) {
-            alert("Biometric registration failed. Please try again.");
-            return; // ❌ Prevent redirection if biometric fails
-          }  
+        // if (!biometricSuccess) {
+        //     alert("Biometric registration failed. Please try again.");
+        //     return; // ❌ Prevent redirection if biometric fails
+        //   }  
+        const faceverify = await loginUser(user.uid);
+
+        if (!faceverify) {
+          // alert("Face registration failed. Please try again.");
+          window.location.href="/index.html";
+          return; // Stop execution if face registration fails
+        }
         const userData = userDoc.data();
         console.log(userData.DeviceId);
 
@@ -86,13 +84,22 @@ async function handleSignIn() {
     
      
       } else {
-        const biometricSuccess = await registerBiometric();
+        // const biometricSuccess = await registerBiometric();
     
-        if (!biometricSuccess) {
-            alert("Biometric registration failed. Please try again.");
-            return; // ❌ Prevent redirection if biometric fails
-          }                    // If the us
+        // if (!biometricSuccess) {
+        //     alert("Biometric registration failed. Please try again.");
+        //     return; // ❌ Prevent redirection if biometric fails
+        //   }                    // If the us
         // er is logging in for the first time, register their device
+        
+        const faceRegistered = await registerUser(user.uid);
+
+          if (!faceRegistered) {
+            alert("Face registration failed. Please try again.");
+            return; // Stop execution if face registration fails
+          }
+
+
         const userDetails = {
           name: user.displayName,
           email: user.email,
@@ -139,12 +146,12 @@ async function handleSignIn() {
       // const currentDeviceID = generateDeviceID();
 
       if (!userDoc.exists()) {
-        const biometricSuccess = await registerBiometric();
-    
-        if (!biometricSuccess) {
-            alert("Biometric registration failed. Please try again.");
-            return; // ❌ Prevent redirection if biometric fails
-          } 
+        const faceRegistered = await registerUser(user.uid);
+
+          if (!faceRegistered) {
+            alert("Face registration failed. Please try again.");
+            return; // Stop execution if face registration fails
+          }
 
  // If the user is logging in for the first time, register their device
         const userDetails = {
@@ -170,12 +177,13 @@ async function handleSignIn() {
         
       }else{
         // / Log successful login in Firestore
-        const biometricSuccess = await verifyBiometric();
-    
-        if (!biometricSuccess) {
-            alert("Biometric registration failed. Please try again.");
-            return; // ❌ Prevent redirection if biometric fails
-          }  
+        const faceverify = await loginUser(user.uid);
+
+        if (!faceverify) {
+          // alert("Face registration failed. Please try again.");
+          window.location.href="/index.html";
+          return; // Stop execution if face registration fails
+        }
       // Save UID in sessionStorage
       sessionStorage.setItem('userEmail', user.email);
       sessionStorage.setItem('company',companyName);
@@ -324,8 +332,8 @@ async function verifyBiometric() {
       }
 
       console.log("Biometric verification successful!");
-      window.location.href = "/Employee/home.html"; //
-      //  ✅ Redirect after success
+      // window.location.href = "/Employee/home.html";
+      //       //  ✅ Redirect after success
       sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
       return true;
   } catch (error) {
@@ -351,3 +359,174 @@ try {
     alert("Logout failed. Please try again.");
   }
 }
+
+
+
+
+
+
+
+
+
+//Face DEtection
+
+const video = document.getElementById("video");
+const statusText = document.getElementById("status");
+async function startCamera() {
+  try {
+      const constraints = { 
+          video: { 
+              facingMode: "user", // Use "environment" for the back camera
+              width: { ideal: 640 },
+              height: { ideal: 480 }
+          }
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      video.srcObject = stream;
+
+      // Ensure video plays on mobile
+      video.onloadedmetadata = () => {
+          video.play().catch(err => console.error("Autoplay error:", err));
+      };
+
+  } catch (err) {
+      console.error("Camera error:", err);
+      alert("Camera access is blocked! Please enable camera permissions.");
+  }
+}
+// Load Face API Models from CDN
+async function loadModels() {
+    const MODEL_URL = "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/";
+
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL); // Load expressions model
+
+    console.log("✅ Face API models loaded successfully!");
+}
+
+// Detect facial expression (smile)
+async function detectExpression(requiredExpression) {
+    for (let i = 0; i < 10; i++) {
+        const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceExpressions();
+
+        if (detection && detection.expressions[requiredExpression] > 0.7) {
+            return true;
+        }
+        await new Promise(resolve => setTimeout(resolve, 300)); // Wait for 300ms
+    }
+    return false;
+}
+
+// Register 
+async function registerUser(id) {
+
+  console.log("Registering user:", id);
+  statusText.style.display="block";
+  statusText.innerText = "Smile for registration!";
+  
+  let smileDetected = await detectExpression("happy");
+
+  while (!smileDetected) {
+    console.log("Smile not detected. Waiting...");
+    statusText.innerText = "Smile not detected. Try again!";
+    smileDetected = await detectExpression("happy");
+  }
+
+  console.log("Smile detected!");
+
+  let detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptor();
+
+  while (!detection) {
+    console.log("No face detected. Trying again...");
+    statusText.innerText = "No face detected. Try again!";
+    detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+  }
+
+  console.log("Face detected:", detection);
+
+  try {
+    await setDoc(doc(db, "face", id), {
+      name: id,
+      faceDescriptor: Array.from(detection.descriptor)
+    });
+    console.log("✅ Face registered in Firestore!");
+    alert("Registered in Firestore");
+    return true;
+  } catch (error) {
+    console.error("❌ Error saving to Firestore:", error);
+    alert("Error saving face data!");
+    return false;
+  }
+}
+async function loginUser(id) {
+  statusText.style.display = "block";
+  statusText.innerText = "Show any valid expression to login!";
+
+  const validExpressions = ["happy", "surprised", "neutral"];
+  let expressionDetected = false;
+
+  // Keep checking for a valid expression
+  while (!expressionDetected) {
+      for (const expression of validExpressions) {
+          if (await detectExpression(expression)) {
+              expressionDetected = true;
+              break;  // Exit loop if any expression is detected
+          }
+      }
+      if (!expressionDetected) {
+          statusText.innerText = "No valid expression detected. Try again!";
+      }
+  }
+
+  statusText.innerText = "Expression detected! Now verifying face...";
+
+  let detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptor();
+
+  while (!detection) {
+      statusText.innerText = "No face detected. Try again!";
+      detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+  }
+
+  const descriptor = detection.descriptor;
+
+  // Fetch user data from Firestore
+  const userDoc = await getDoc(doc(db, "face", id));
+
+  if (!userDoc.exists()) {
+      alert("Face ID Not registered");
+      return false;
+  }
+
+  const data = userDoc.data();
+  if (!data.faceDescriptor) {
+      statusText.innerText = "No face data found for user!";
+      return false;
+  }
+
+  const storedDescriptor = new Float32Array(data.faceDescriptor);
+  const distance = faceapi.euclideanDistance(descriptor, storedDescriptor);
+
+  if (distance < 0.6) {
+      statusText.innerText = "Login Successful! Welcome";
+      return true;
+  } else {
+      statusText.innerText = "Face not recognized!";
+      return false;
+  }
+}
+
+// Initialize everything
+loadModels().then(startCamera);

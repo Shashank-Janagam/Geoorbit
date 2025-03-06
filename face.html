@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition with OpenCV.js</title>
+</head>
+<body>
+    <h1>Face Recognition with OpenCV.js</h1>
+    
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <input type="text" id="username" placeholder="Enter Name">
+    <button id="registerBtn">Register Face</button>
+    <button id="loginBtn">Login</button>
+
+    <p id="message"></p>
+
+    <script>
+        function onOpenCvReady() {
+            if (cv.getBuildInformation) {
+                console.log("✅ OpenCV.js Loaded!");
+                startCamera(); // Start camera only after OpenCV is ready
+            } else {
+                console.error("⚠️ OpenCV.js not fully loaded. Retrying...");
+                setTimeout(onOpenCvReady, 500); // Retry after 500ms
+            }
+        }
+    </script>
+    
+    <!-- Load OpenCV first -->
+    <script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()" defer></script>
+    
+    <!-- Load face.js after OpenCV -->
+    <script type="module" src="face.js"></script>
+    
+</body>
+</html>

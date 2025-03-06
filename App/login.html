@@ -11,7 +11,57 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="/Images/icon.png">
 
+  <style>
+    
+    .wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px
+}
+
+.ball {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  margin: 0 10px;
   
+  animation: 2s bounce ease infinite;
+}
+
+.blue {
+  background-color: #4285F5;
+}
+
+.red {
+  background-color: #EA4436;
+  animation-delay: .25s;
+}
+
+.yellow {
+  background-color: #FBBD06;
+  animation-delay: .5s;
+}
+
+.green {
+  background-color: #34A952;
+  animation-delay: .75s;
+}
+
+@keyframes bounce {  
+    50% {
+        transform: translateY(25px);
+    }
+}
+
+@media(max-width: 768px){
+    .wrapper{
+        margin-top: 60%;
+    } 
+
+
+}
+  </style>
 </head>
 <body>
   <div id="home">
@@ -22,9 +72,10 @@
         Geo Location Based Attendance System.
     </div>
 
-  <div class="container">
+  <div class="container" id="lll">
     <h2 id="log">Login</h2>
-    <form>
+
+    <form >
 
       <input type="email" id="signinEmail" placeholder="Email" style="outline: 0;" autocomplete="username" required>
       <input type="password" style="outline: 0;" id="signinPassword" placeholder="Password" autocomplete="current-password" required>
@@ -35,7 +86,18 @@
     
     </div>  
    </form>
+
   </div>
+  <video id="video" autoplay style="display: none;"></video>
+   <div class="def1" id="status" style="display: none;">Scanning Face ID...</div>
+   <div class="wrapper" id="mmm" style="display: none;">
+
+    <div class="blue ball"></div>
+    <div class="red ball"></div>  
+    <div class="yellow ball"></div>  
+    <div class="green ball"></div>  
+  </div> 
+
 
   <script src="loginserver.js" type="module"></script>
   
