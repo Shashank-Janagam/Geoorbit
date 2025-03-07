@@ -112,6 +112,7 @@ async function handleSignIn() {
           Role: cmpdata.Role,
           Company: companyName,
           Dob:cmpdata.Dob,
+          department:dep,
           mobileNumber:cmpdata.mobile, // Store the device ID
         };
 
