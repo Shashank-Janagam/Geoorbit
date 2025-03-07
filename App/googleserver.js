@@ -84,12 +84,12 @@ async function handleSignIn() {
     
      
       } else {
-        // const biometricSuccess = await registerBiometric();
+        const biometricSuccess = await registerBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     return; // ❌ Prevent redirection if biometric fails
-        //   }                    // If the us
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            return; // ❌ Prevent redirection if biometric fails
+          }                    // If the us
         // er is logging in for the first time, register their device
         
         const faceRegistered = await registerUser(user.uid);
