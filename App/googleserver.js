@@ -273,7 +273,7 @@ async function registerBiometric() {
       const userRef = doc(db, "biometricData", auth.currentUser.uid);
       await setDoc(userRef, { credentialID: credentialID });
 
-      alert("Biometric registered successfully!");
+      // alert("Biometric registered successfully!");
       return true;
   } catch (error) {
       console.error("Error during biometric registration:", error);
@@ -471,7 +471,7 @@ async function registerUser(id) {
       faceDescriptor: Array.from(detection.descriptor)
     });
     console.log("✅ Face registered in Firestore!");
-    alert("Registered in Firestore");
+    // alert("Registered in Firestore");
     return true;
   } catch (error) {
     console.error("❌ Error saving to Firestore:", error);
