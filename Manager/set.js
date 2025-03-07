@@ -21,14 +21,15 @@ async function fetchUserData() {
     window.location.href = "/index.html"; // Redirect to login page
   } else {
     const company=sessionStorage.getItem('company');
+    const dep=sessionStorage.getItem('dep');
     // const docRef = doc(db, `company/${company}/Location`, "PolygonData");
-    const userRef = doc(db, `company/${company}/managers`, userUID); // Reference to the user's document
-    const userDoc = await getDoc(userRef);
-    if(!userDoc.exists()){
-        // alert("Not a manager");
-        window.location.href="/index.html";
-        return 0;
-    }
+    const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Reference to the managers's document
+    // const userDoc = await getDoc(userRef);
+    // // if(!userDoc.exists()){
+    // //     // alert("Not a manager");
+    // //     window.location.href="/index.html";
+    // //     return 0;
+    // // }
   }
 }
 
@@ -128,7 +129,9 @@ async function saveCoordinatesToDatabase(coords) {
       polygonData[`lng${index + 1}`] = coord.lng();
     });
     const company=sessionStorage.getItem('company');
-    const docRef = doc(db, `company/${company}/Location`, "PolygonData");
+    const dep=sessionStorage.getItem('dep');
+    alert(dep);
+    const docRef = doc(db, `company/${company}/${dep}/${dep}/Location`, "PolygonData");
     await setDoc(docRef, polygonData);
 
     console.log("Polygon coordinates saved successfully.");

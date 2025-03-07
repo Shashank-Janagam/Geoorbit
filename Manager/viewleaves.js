@@ -34,6 +34,7 @@ const db = getFirestore(app);
 // Get userEmail from sessionStorage
 const userUID=sessionStorage.getItem('userUID');
 const company=sessionStorage.getItem('company');
+const dep=sessionStorage.getItem('dep');
  console.log(company);
  if(!userUID){
     alert("Access Denied. Please log in.");
@@ -52,7 +53,7 @@ const userEmail=sessionStorage.getItem('userEmail')
 
 
 try{
-const leaves = collection(db, `company/${company}/Leave_Approvals`);
+const leaves = collection(db, `company/${company}/${dep}/${dep}/Leave_Approvals`);
 const querySnapshot = await getDocs(leaves);
 if (!querySnapshot.empty) {
     console.log(doc);
@@ -112,7 +113,7 @@ if (!querySnapshot.empty) {
 }
 
 window.displayreq = async function (id) {
-    const leaves1 = doc(db, `company/${company}/Leave_Approvals`, id);
+    const leaves1 = doc(db, `company/${company}/${dep}/${dep}/Leave_Approvals`, id);
     
          
 
@@ -125,7 +126,7 @@ window.displayreq = async function (id) {
             const dateArray = leavedata.SelectedDates;
 
             console.log(leavedata.EmployeeID);
-        const usersCollection = collection(db, `/company/${company}/users`);
+        const usersCollection = collection(db, `/company/${company}/${dep}/${dep}/Employees`);
           const q = query(usersCollection, where("EmployeeID", "==",leavedata.EmployeeID));
           const querySnapshot = await getDocs(q);
           if (!querySnapshot.empty) {
@@ -172,7 +173,7 @@ window.displayreq = async function (id) {
 async function markOnLeave(id, datesArray) {
     try {
         // Fetch employee details based on EmployeeID
-        const employeesCollection = collection(db, `/company/${company}/users`);
+        const employeesCollection = collection(db, `/company/${company}/${dep}/${dep}/Employees`);
         const q = query(employeesCollection, where("EmployeeID", "==", id));
         const employeesSnapshot = await getDocs(q);
 
@@ -199,7 +200,7 @@ async function markOnLeave(id, datesArray) {
                 const day = dateParts[2].padStart(2, '0');
                 const date2 = `${day}-${month}-${year}`;
 
-                const attendanceDocRef = doc(db, `company/${company}/Attendance/${id}_${leaveDate}`);
+                const attendanceDocRef = doc(db, `company/${company}/${dep}/${dep}/Attendance/${id}_${leaveDate}`);
                 await setDoc(attendanceDocRef, {
                     EmployeeID: id,
                     Date: leaveDate,    

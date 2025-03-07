@@ -25,7 +25,7 @@ const db = getFirestore(app); // Initialize Firestore
 // File where the user details are displayed (e.g., userDetails.js)
 const userUID = sessionStorage.getItem('userUID');
 const company=sessionStorage.getItem('company');
-const rdevice=sessionStorage.getItem('rdevice');
+const dep=sessionStorage.getItem('dep');
 let userData=null;
 
 if (!userUID) {
@@ -35,7 +35,7 @@ if (!userUID) {
 } else {
   console.log("User is authenticated with UID:", userUID);
   // Fetch user data from Firestore using userUID
-  const userRef = doc(db, `company/${company}/users`, userUID);
+  const userRef = doc(db, `company/${company}/${dep}/${dep}/Employees`, userUID);
   const cref=doc(db,`company/${company}`);
 
   try {
@@ -69,7 +69,7 @@ const notificationSound = new Audio("/Images/notifi.mp3"); // Place a valid audi
 
 async function listenForUserMessages() {
     try {
-        const chatRoomsRef = collection(db, `company/${company}/OrbitConnect`);
+        const chatRoomsRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect`);
         const q = query(chatRoomsRef);
 
         const querySnapshot = await getDocs(q);
@@ -82,7 +82,7 @@ async function listenForUserMessages() {
             if (chatRoomData.members && chatRoomData.members.includes(userData.EmployeeID)) {
                 console.log("Listening for messages in chat room:", chatRoomID);
 
-                const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
+                const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
                 onSnapshot(query(messagesRef, orderBy("timestamp", "asc")), async (snapshot) => {
                     snapshot.docChanges().forEach(async (change) => {
                         if (change.type === "added") {
@@ -116,7 +116,7 @@ async function listenForUserMessages() {
                                 // Trigger the toast notification with message details
                                 showToast(senderData.name, senderData.photoURL, messageData.message);
                                   try {
-                                    await updateDoc(doc(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`, change.doc.id), {
+                                    await updateDoc(doc(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`, change.doc.id), {
                                         notified: true
                                     });
                                 } catch (error) {

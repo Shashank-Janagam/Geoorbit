@@ -34,6 +34,7 @@ const db = getFirestore(app);
 // Get userEmail from sessionStorage
 const userUID=sessionStorage.getItem('userUID');
 const company=sessionStorage.getItem('company');
+const dep=sessionStorage.getItem('dep');
  // console.log(company);
  if(!userUID){
     alert("Access Denied. Please log in.");
@@ -195,7 +196,7 @@ let datearray=[];
         fel.innerHTML="Please Fill the Reason";
     }else{
     try{
-    const leaveref= await addDoc(collection(db,`company/${company}/Leave_Approvals`),{
+    const leaveref= await addDoc(collection(db,`company/${company}/${dep}/${dep}/Leave_Approvals`),{
         Date:formattedDate,
         Time:time,
         SelectedDates:datearray,
@@ -219,7 +220,7 @@ let datearray=[];
     }
 });
 try{
-const leaves = collection(db, `company/${company}/Leave_Approvals`);
+const leaves = collection(db, `company/${company}/${dep}/${dep}/Leave_Approvals`);
 const q = query(leaves, where("EmployeeID", "==", userEmail.replace("@gmail.com","")));
 const querySnapshot = await getDocs(q);
 if (!querySnapshot.empty) {

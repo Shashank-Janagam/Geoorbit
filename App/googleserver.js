@@ -49,10 +49,12 @@ async function handleSignIn() {
       const cmpDoc=await getDoc(cmpref);
       const cmpdata=cmpDoc.data();
       const companyName=cmpdata.company;
+      const dep=cmpdata.department;
 
      sessionStorage.setItem('company',companyName);
+     sessionStorage.setItem('dep',dep);
 
-      const userRef = doc(db, `company/${companyName}/users`, user.uid);
+      const userRef = doc(db, `company/${companyName}/${dep}/${dep}/Employees`, user.uid);
 
       // Check if the user already exists in Firestore
       const userDoc = await getDoc(userRef);
@@ -80,6 +82,8 @@ async function handleSignIn() {
       // Save UID in sessionStorage
       sessionStorage.setItem('userEmail', user.email);
       sessionStorage.setItem('userUID', user.uid);
+      sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
+
       window.location.href="/Employee/home.html";
     
      
@@ -121,6 +125,8 @@ async function handleSignIn() {
       sessionStorage.setItem('userEmail', user.email);
 
       sessionStorage.setItem('userUID', user.uid);
+      sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
+
       window.location.href = userDoc.exists() ? "/Employee/home.html" : "/Employee/userDetails.html";
       }
 
@@ -137,13 +143,11 @@ async function handleSignIn() {
                 const cmpDoc=await getDoc(cmpref);
                 const cmpdata=cmpDoc.data();
                 const companyName=cmpdata.company;
-                 const userRef = doc(db, `company/${companyName}/managers`, user.uid);
+                const dep=cmpdata.department;
+                const userRef = doc(db, `company/${companyName}/${dep}/${dep}`);
 
       // Check if the user already exists in Firestore
       const userDoc = await getDoc(userRef);
-
-      // Generate the current device ID
-      // const currentDeviceID = generateDeviceID();
 
       if (!userDoc.exists()) {
         const faceRegistered = await registerUser(user.uid);
@@ -171,6 +175,8 @@ async function handleSignIn() {
         
         sessionStorage.setItem('userEmail', user.email);
         sessionStorage.setItem('company',companyName);
+        sessionStorage.setItem('dep',dep);
+
   
         sessionStorage.setItem('userUID', user.uid);
         window.location.href = "/Manager/mhome.html";
@@ -187,9 +193,13 @@ async function handleSignIn() {
       // Save UID in sessionStorage
       sessionStorage.setItem('userEmail', user.email);
       sessionStorage.setItem('company',companyName);
+      sessionStorage.setItem('dep',dep);
+
 
       sessionStorage.setItem('userUID', user.uid);
       window.location.href = "/Manager/mhome.html";
+      sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
+
       }
 
        

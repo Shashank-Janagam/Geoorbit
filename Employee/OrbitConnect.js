@@ -23,6 +23,7 @@ const db = getFirestore(app);
 // 🔹 Get Logged-in User Info
 const company = sessionStorage.getItem('company');
 const userUID = sessionStorage.getItem('userUID');
+const dep=sessionStorage.getItem('dep');
 
 onAuthStateChanged(auth,(user) => {
     if (!user) {
@@ -39,7 +40,7 @@ if (!company || !userUID) {
     alert("User not authenticated!");
     window.location.href="/index.html";
 } else {
-    const userRef = doc(db, `company/${company}/users`, userUID);
+    const userRef = doc(db, `company/${company}/${dep}/${dep}/Employees`, userUID);
     const userDoc = await getDoc(userRef);
     var userData = userDoc.data();
 }
@@ -51,7 +52,7 @@ timestamp: serverTimestamp() // Store Firebase server timestamp
 const chatscon = document.querySelector('.chats');
 async function displayAllEmployees() {
     try {
-        const usersCollection = collection(db, `company/${company}/users`);
+        const usersCollection = collection(db, `company/${company}/${dep}/${dep}/Employees`);
         onSnapshot(usersCollection, async (querySnapshot) => {
             let employeeList = [];
 
@@ -62,7 +63,7 @@ async function displayAllEmployees() {
 
                 if (employeeData.EmployeeID !== userData.EmployeeID) {
                     const chatRoomID = generateChatRoomID(userData.EmployeeID, employeeData.EmployeeID);
-                    const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
+                    const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
                     const lastMessageQuery = query(messagesRef, orderBy("timestamp", "desc"), limit(1));
 
                     onSnapshot(lastMessageQuery, (messageSnapshot) => {
@@ -192,7 +193,7 @@ async function sendMessage(chatRoomID, employeeData) {
     }
 
     try {
-        const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
+        const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
 
         // 🔹 Send message immediately with serverTimestamp
         const messageRef = await addDoc(messagesRef, {
@@ -216,7 +217,7 @@ async function sendMessage(chatRoomID, employeeData) {
                 const formattedTime = data.time.slice(0, 5); // Extract "HH:MM"
 
                 // 🔹 Update message with actual IST date & time
-                await updateDoc(doc(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`, messageRef.id), {
+                await updateDoc(doc(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`, messageRef.id), {
                     Date: formattedDate,
                     Time: formattedTime
                 });
@@ -246,7 +247,7 @@ async function displayMessages(chatRoomID, employeeData) {
     const chatContainer = document.getElementById("chat1");
     chatContainer.innerHTML = ""; // Clear previous messages
     document.getElementById('chat').style.display = "flex";
-    const chatRoomRef = doc(db, `company/${company}/OrbitConnect`, chatRoomID);
+    const chatRoomRef = doc(db, `company/${company}/${dep}/${dep}/OrbitConnect`, chatRoomID);
     const chatRoomSnapshot = await getDoc(chatRoomRef);
 
     if (!chatRoomSnapshot.exists()) {
@@ -257,7 +258,7 @@ async function displayMessages(chatRoomID, employeeData) {
         });
     }
 
-    const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
+    const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
     let lastMessageDate = null;
     let isInitialLoad = true;
 
@@ -339,7 +340,7 @@ async function displayMessages(chatRoomID, employeeData) {
 
 
 async function markMessagesAsRead(chatRoomID) {
-    const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
+    const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
     const q = query(messagesRef, orderBy("timestamp", "asc"));
     if (unsubsnap) {
         unsubsnap(); // Stop listening to the old chat room
@@ -350,7 +351,7 @@ async function markMessagesAsRead(chatRoomID) {
 
             if (messageData.receiverID === userData.EmployeeID && !messageData.read) {
                 try {
-                    await updateDoc(doc(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`, docSnap.id), {
+                    await updateDoc(doc(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`, docSnap.id), {
                         read: true
                     });
                 } catch (error) {
@@ -367,7 +368,7 @@ async function clearChatForUser(chatRoomID) {
     if (!confirm("Are you sure you want to clear the chat? This will not delete messages for the other user.")) return;
 
     try {
-        const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
+        const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
         const querySnapshot = await getDocs(messagesRef);
 
         // Update each message to mark it as hidden for the current user
@@ -398,7 +399,7 @@ const notificationSound = new Audio("/Images/notifi.mp3"); // Place a valid audi
 
 async function listenForUserMessages() {
     try {
-        const chatRoomsRef = collection(db, `company/${company}/OrbitConnect`);
+        const chatRoomsRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect`);
         const q = query(chatRoomsRef);
 
         const querySnapshot = await getDocs(q);
@@ -411,7 +412,7 @@ async function listenForUserMessages() {
             if (chatRoomData.members && chatRoomData.members.includes(userData.EmployeeID)) {
                 // console.log("Listening for messages in chat room:", chatRoomID);
 
-                const messagesRef = collection(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`);
+                const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
                 onSnapshot(query(messagesRef, orderBy("timestamp", "asc")), async (snapshot) => {
                     snapshot.docChanges().forEach(async (change) => {
                         if (change.type === "added") {
@@ -424,7 +425,7 @@ async function listenForUserMessages() {
 
                                 // Fetch sender details
                                 const senderQuery = query(
-                                    collection(db, `company/${company}/users`),
+                                    collection(db, `company/${company}/${dep}/${dep}/Employees`),
                                     where("EmployeeID", "==", messageData.senderID)
                                 );
 
@@ -445,7 +446,7 @@ async function listenForUserMessages() {
                                 // Trigger the toast notification with message details
                                 showToast(senderData.name, senderData.photoURL, messageData.message);
                                 try {
-                                    await updateDoc(doc(db, `company/${company}/OrbitConnect/${chatRoomID}/messages`, change.doc.id), {
+                                    await updateDoc(doc(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`, change.doc.id), {
                                         notified: true
                                     });
                                 } catch (error) {

@@ -50,8 +50,9 @@ function drawPolygon(map, polygon) {
   });
 }
 const company=sessionStorage.getItem('company');
+const dep=sessionStorage.getItem('dep');
 // Function to get current location and check if it's within the polygon
-const locref=doc(db,`company/${company}/Location/PolygonData`);
+const locref=doc(db,`company/${company}/${dep}/${dep}/Location/PolygonData`);
 const loco=await getDoc(locref);
 const data=loco.data();
 function getLocationAndCheckRadius() {
@@ -167,7 +168,8 @@ let time=null;
 async function logAttendance() {
   try {
     const company=sessionStorage.getItem('company');
-    const collectionName = `company/${company}/Attendance`; // Firestore collection for attendance
+    const dep=sessionStorage.getItem('dep');
+    const collectionName = `company/${company}/${dep}/${dep}/Attendance`; // Firestore collection for attendance
 
     if (!userUID) {
       console.log("No user is authenticated!");
@@ -179,7 +181,7 @@ async function logAttendance() {
         
         // Create an async function inside the callback
         (async () => {
-          const userRef = doc(db, `/company/${company}/users`, userUID); // Reference to the user's document
+          const userRef = doc(db, `/company/${company}/${dep}/${dep}/Employees`, userUID); // Reference to the user's document
 
           try {
             const userDoc = await getDoc(userRef);

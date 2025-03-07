@@ -31,27 +31,28 @@ onAuthStateChanged(auth, async (user) => {
 
   const userUID = user.uid;
   const company = sessionStorage.getItem('company');
+  const dep=sessionStorage.getItem('dep');
 
-  const userRef = doc(db, `company/${company}/users`, userUID); // Fetch user data from Firestore
-    const userDoc = await getDoc(userRef);
-    const userData = userDoc.data();
+  // const userRef = doc(db, `company/${company}/users`, userUID); // Fetch user data from Firestore
+  //   const userDoc = await getDoc(userRef);
+  //   const userData = userDoc.data();
 
-  if (company!=userData.Company) {
-    alert("Session expired. Please log in again.");
-    window.location.href = "/index.html";
-    return;
-  }
+  // if (company!=userData.Company) {
+  //   alert("Session expired. Please log in again.");
+  //   window.location.href = "/index.html";
+  //   return;
+  // }
 
   try {
     // Check if the user role exists in the users collection
-    const userRef = doc(db, `company/${company}/users`, userUID); // Fetch user data from Firestore
+    const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Fetch user data from Firestore
     const userDoc = await getDoc(userRef);
 
     if (userDoc.exists()) {
       const userData = userDoc.data();
-      const userRole = userData.role; // Assuming the role is stored under 'role' in the user document
+      const userRole = userData.Role; // Assuming the role is stored under 'role' in the user document
 
-      if (userRole === "manager") {
+      if (userRole === "Manager") {
         console.log("User is a manager. Access granted.");
         sessionStorage.setItem('userRole', 'manager');
       } else {
@@ -73,9 +74,10 @@ onAuthStateChanged(auth, async (user) => {
 // Fetch and display all employees with their roles
 async function displayAllEmployees() {
     const company = sessionStorage.getItem('company');
+    const dep=sessionStorage.getItem('dep');
     
     try {
-      const usersCollection = collection(db, `/company/${company}/users`);
+      const usersCollection = collection(db, `/company/${company}/${dep}/${dep}/Employees`);
       const querySnapshot = await getDocs(usersCollection);
   
       if (!querySnapshot.empty) {
@@ -124,8 +126,9 @@ async function displayAllEmployees() {
   
     try {
       const company = sessionStorage.getItem('company');
+      const dep=sessionStorage.getItem('dep');
       // Fetch employee details from 'users' collection by EmployeeID
-      const usersCollection = collection(db, `/company/${company}/users`);
+      const usersCollection = collection(db, `/company/${company}/${dep}/${dep}/Employees`);
       const q = query(usersCollection, where("EmployeeID", "==", EmployeeID));
       const querySnapshot = await getDocs(q);
   

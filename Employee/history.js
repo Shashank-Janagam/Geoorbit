@@ -36,7 +36,8 @@ if (!userEmail) {
   try {
     // Reference the attendance collection in Firestore
     const company=sessionStorage.getItem('company');
-    const attendanceCollection = collection(db, `/company/${company}/Attendance`);
+    const dep=sessionStorage.getItem('dep');
+    const attendanceCollection = collection(db, `/company/${company}/${dep}/${dep}/Attendance`);
 
     // Create query to filter by Email
     const employeeID = userEmail.replace("@gmail.com", ""); 

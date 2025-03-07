@@ -1,7 +1,7 @@
 // / Import Firebase modules
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
-import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc,collection } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
 // Replace with your actual Firebase configuration
 const firebaseConfig = {
@@ -24,6 +24,7 @@ const db = getFirestore(app); // Initialize Firestore
 
 // File where the user details are displayed (e.g., userDetails.js)
 const userUID = sessionStorage.getItem('userUID');
+const dep=sessionStorage.getItem('dep');
 
 if (!userUID) {
   console.log("No user is authenticated!");
@@ -33,15 +34,17 @@ if (!userUID) {
   console.log("User is authenticated with UID:", userUID);
 
  const company=sessionStorage.getItem('company');
+ const dep=sessionStorage.getItem('dep');
  console.log(company);
-     const userRef = doc(db, `/company/${company}/managers`,userUID);
+    const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Fetch user data from Firestore
     const userDoc = await getDoc(userRef);
-      const cref=doc(db,`company/${company}`);
+    const cref=doc(db,`company/${company}`);
     
 
   try {
     const cdoc=await getDoc(cref);
     const cdata=cdoc.data();
+    console.log(cdata.clogo)
     document.getElementById("clogo").src=cdata.clogo;
     document.getElementById('clogo').style.display='block';
     

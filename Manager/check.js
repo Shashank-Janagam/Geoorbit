@@ -32,8 +32,9 @@ onAuthStateChanged(auth, async (user) => {
   
     const userUID = user.uid;
     const company = sessionStorage.getItem('company');
+    const dep=sessionStorage.getItem('dep');
   
-    const userRef = doc(db, `company/${company}/users`, userUID); // Fetch user data from Firestore
+    const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Fetch user data from Firestore
       const userDoc = await getDoc(userRef);
       const userData = userDoc.data();
   
@@ -46,25 +47,26 @@ onAuthStateChanged(auth, async (user) => {
 
   try {
    // Check if the user role exists in the users collection
-      const userRef = doc(db, `company/${company}/users`, userUID); // Fetch user data from Firestore
+      const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Fetch user data from Firestore
       const userDoc = await getDoc(userRef);
   
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const userRole = userData.role; // Assuming the role is stored under 'role' in the user document
-  alert(userRole);
+        console.log(userData);
+        const userRole = userData.Role; // Assuming the role is stored under 'role' in the user document
+        // alert(userRole);
         if (userRole === "manager") {
           console.log("User is a manager. Access granted.");
           sessionStorage.setItem('userRole', 'manager');
         } else {
           // alert("Access Denied. Only managers can view this page.");
           // await signOut(auth);
-          window.location.href = "/index.html"; // Redirect to login page
+          // window.location.href = "/index.html"; // Redirect to login page
         }
       } else {
         alert("User not found in the database.");
         await signOut(auth);
-        window.location.href = "/index.html";
+        // window.location.href = "/index.html";
       }
   } catch (error) {
     console.error("Error fetching user role from Firestore:", error);
@@ -100,7 +102,8 @@ search.addEventListener('click', async () => {
   try {
       // Reference the attendance collection in Firestore
       const company = sessionStorage.getItem('company');
-      const attendanceCollection = collection(db, `/company/${company}/Attendance`);
+      const dep=sessionStorage.getItem('dep');
+      const attendanceCollection = collection(db, `/company/${company}/${dep}/${dep}/Attendance`);
 
       // Get today's date (define todayDate here)
         // Format date as YYYY-MM-DD
@@ -173,8 +176,9 @@ search.addEventListener('click', async () => {
 
   try {
       const company = sessionStorage.getItem('company');
+      const dep=sessionStorage.getItem('dep');
+      const usersCollection = collection(db, `/company/${company}/${dep}/${dep}/Employees`);
       // Fetch employee details from 'users' collection by EmployeeID
-      const usersCollection = collection(db, `/company/${company}/users`);
       const q = query(usersCollection, where("EmployeeID", "==", EmployeeID));
       const querySnapshot = await getDocs(q);
   
@@ -357,7 +361,8 @@ let time=null;
         console.error("Error fetching time:", error);
     }
       const company=sessionStorage.getItem('company');
-      const attendanceCollection = collection(db, `/company/${company}/Attendance`);
+      const dep=sessionStorage.getItem('dep');
+      const attendanceCollection = collection(db, `/company/${company}/${dep}/${dep}/Attendance`);
         const q = query(attendanceCollection, where("Date", "==", formattedDate));
         const querySnapshot = await getDocs(q);
         
@@ -437,7 +442,8 @@ let time=null;
   async function empdate(selectedDate) {
     try {
       const company = sessionStorage.getItem('company');
-      const attendanceCollection = collection(db, `/company/${company}/Attendance`);
+      const dep=sessionStorage.getItem('dep');
+      const attendanceCollection = collection(db, `/company/${company}/${dep}/${dep}/Attendance`);
       const q = query(attendanceCollection, where("Date", "==", selectedDate));
 
       // Await the Firestore query
@@ -509,6 +515,7 @@ freeze.addEventListener("click", async () => {
     let formattedDate=null;
     let time=null;
     const company = sessionStorage.getItem('company');
+    const dep=sessionStorage.getItem('dep');
     try {
       const response = await fetch("https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata");
       const data = await response.json();
@@ -524,11 +531,11 @@ freeze.addEventListener("click", async () => {
   } catch (error) {
       console.error("Error fetching time:", error);
   }
-    const employeesCollection = collection(db, `/company/${company}/users`);
+    const employeesCollection = collection(db, `/company/${company}/${dep}/${dep}/Employees`);
     const employeesSnapshot = await getDocs(employeesCollection);
 
     // Get the attendance data for the day
-    const attendanceCollection = collection(db, `/company/${company}/Attendance`);
+    const attendanceCollection = collection(db, `/company/${company}/${dep}/${dep}/Attendance`);
     const attendanceQuery = query(attendanceCollection, where("Date", "==", formattedDate));
     const attendanceSnapshot = await getDocs(attendanceQuery);
 
@@ -554,7 +561,7 @@ freeze.addEventListener("click", async () => {
       if (!attendedEmployeeIDs.has(employeeID)) {
         try {
           // Create a document for the absent employee
-          const attendanceDocRef = doc(db, `company/${company}/Attendance/${employeeID}_${formattedDate}`);
+          const attendanceDocRef = doc(db, `company/${company}/${dep}/${dep}/Attendance/${employeeID}_${formattedDate}`);
           await setDoc(attendanceDocRef, {
             EmployeeID: employeeID,
             Date: formattedDate,

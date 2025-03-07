@@ -102,7 +102,11 @@ display: flex; /* Use flexbox to arrange the buttons */
   }
   
   
-
+#vido{
+  background-color: #038c5a;
+  width: 100%;
+  height: 300px;
+}
 
 
 
@@ -148,7 +152,7 @@ display: flex; /* Enable flexbox layout */
 justify-content: center; /* Center content horizontally */
 align-items: center; /* Center content vertically */
 
-padding-top: 8vmax;
+padding-top: 5vmax;
 padding-bottom: 90px;
 
 flex-direction: column;
