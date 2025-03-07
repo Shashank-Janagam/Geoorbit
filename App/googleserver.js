@@ -167,6 +167,7 @@ async function handleSignIn() {
           Role: "Manager",
           Company: companyName,
           Dob:cmpdata.Dob,
+          department:dep,
           mobileNumber:cmpdata.mobile, // Store the device ID
             };
 
