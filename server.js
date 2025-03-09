@@ -42,5 +42,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(3000, () => {
-    console.log("Server running at https://vv127g59-3000.inc1.devtunnels.ms:3000");
+    console.log("Server running at https://geoorbit.netlify.app:3000");
 });

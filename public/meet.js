@@ -1,4 +1,4 @@
-const socket = io("https://vv127g59-3000.inc1.devtunnels.ms/", {
+const socket = io("https:geoorbit.netlify.app/", {
     transports: ["websocket", "polling"]
 });
 
