@@ -4,6 +4,9 @@ import { Server } from "socket.io";
 import { v4 as uuidV4 } from "uuid";
 import path from "path";
 import { fileURLToPath } from "url";
+import cors from "cors"; // Import cors module
+
+app.use(cors()); // Enable CORS for all requests
 
 // Convert __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
