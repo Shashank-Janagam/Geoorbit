@@ -12,6 +12,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const userUID = sessionStorage.getItem('userUID');
+onAuthStateChanged(auth, async (user) => {
+
 
 // Use async function for Firebase data fetching
 async function fetchUserData() {
@@ -24,12 +26,15 @@ async function fetchUserData() {
     const dep=sessionStorage.getItem('dep');
     // const docRef = doc(db, `company/${company}/Location`, "PolygonData");
     const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Reference to the managers's document
-    // const userDoc = await getDoc(userRef);
-    // // if(!userDoc.exists()){
-    // //     // alert("Not a manager");
-    // //     window.location.href="/index.html";
-    // //     return 0;
-    // // }
+    const userDoc = await getDoc(userRef);
+    if(userDoc.exists()){
+        // alert("Not a manager");
+        console.log(user.email);
+        if (userDoc.data().email!=user.email){
+        window.location.href="/index.html";
+        }
+        return 0;
+    }
   }
 }
 
@@ -155,3 +160,4 @@ function printCoordinates(coords) {
 window.onload = function() {
   initMap();
 };
+  });

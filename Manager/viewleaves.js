@@ -36,18 +36,32 @@ const userUID=sessionStorage.getItem('userUID');
 const company=sessionStorage.getItem('company');
 const dep=sessionStorage.getItem('dep');
  console.log(company);
- if(!userUID){
-    alert("Access Denied. Please log in.");
-      window.location.href = "/index.html"; 
 
- }
- const cuser =doc(db,`company/${company}/managers`,userUID);
- const cuserdata=await getDoc(cuser);
- if(!cuserdata.exists()){
-    // alert("Your are Not Authorized to Access this page");
-    window.location.href = "../Employee/home.html"; 
 
- }
+  onAuthStateChanged(auth, async (user) => {
+  
+  
+  // Use async function for Firebase data fetching
+    if (!userUID) {
+      console.log("No user is authenticated!");
+      alert("Please sign in to proceed.");
+      window.location.href = "/index.html"; // Redirect to login page
+    } else {
+      const company=sessionStorage.getItem('company');
+      const dep=sessionStorage.getItem('dep');
+      // const docRef = doc(db, `company/${company}/Location`, "PolygonData");
+      const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Reference to the managers's document
+      const userDoc = await getDoc(userRef);
+      if(userDoc.exists()){
+          // alert("Not a manager");
+          console.log(user.email);
+          if (userDoc.data().email!=user.email){
+          window.location.href="/index.html";
+          }
+          return 0;
+      }
+    }
+});
 
 const userEmail=sessionStorage.getItem('userEmail')
 

@@ -22,54 +22,33 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // Check if the user is authenticated
+const dep=sessionStorage.getItem('dep');
+const company=sessionStorage.getItem('company');
+const userUID=sessionStorage.getItem('userUID');
+
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    alert("Access Denied. Please log in.");
-    window.location.href = "/index.html"; // Redirect to login page
-    return;
-  }
-
-  const userUID = user.uid;
-  const company = sessionStorage.getItem('company');
-  const dep=sessionStorage.getItem('dep');
-
-  // const userRef = doc(db, `company/${company}/users`, userUID); // Fetch user data from Firestore
-  //   const userDoc = await getDoc(userRef);
-  //   const userData = userDoc.data();
-
-  // if (company!=userData.Company) {
-  //   alert("Session expired. Please log in again.");
-  //   window.location.href = "/index.html";
-  //   return;
-  // }
-
-  try {
-    // Check if the user role exists in the users collection
-    const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Fetch user data from Firestore
-    const userDoc = await getDoc(userRef);
-
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      const userRole = userData.Role; // Assuming the role is stored under 'role' in the user document
-
-      if (userRole === "Manager") {
-        console.log("User is a manager. Access granted.");
-        sessionStorage.setItem('userRole', 'manager');
-      } else {
-        // alert("Access Denied. Only managers can view this page.");
-        // await signOut(auth);
-        window.location.href = "/index.html"; // Redirect to login page
-      }
+  
+  
+  // Use async function for Firebase data fetching
+    if (!userUID) {
+      console.log("No user is authenticated!");
+      alert("Please sign in to proceed.");
+      window.location.href = "/index.html"; // Redirect to login page
     } else {
-      alert("User not found in the database.");
-      await signOut(auth);
-      window.location.href = "/index.html";
+      const company=sessionStorage.getItem('company');
+      const dep=sessionStorage.getItem('dep');
+      // const docRef = doc(db, `company/${company}/Location`, "PolygonData");
+      const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Reference to the managers's document
+      const userDoc = await getDoc(userRef);
+      if(userDoc.exists()){
+          // alert("Not a manager");
+          console.log(user.email);
+          if (userDoc.data().email!=user.email){
+          window.location.href="/index.html";
+          }
+          return 0;
+      }
     }
-  } catch (error) {
-    console.error("Error fetching user role from Firestore:", error);
-    alert("Error verifying access. Please try again.");
-    window.location.href = "/index.html";
-  }
 });
 // Fetch and display all employees with their roles
 async function displayAllEmployees() {

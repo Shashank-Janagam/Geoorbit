@@ -50,8 +50,9 @@ resetPasswordButton.addEventListener('click', async (e) => {
 
     const company=sessionStorage.getItem('company');
 const userUID = sessionStorage.getItem('userUID');
+const dep=sessionStorage.getItem('dep');
 
-    const userRef = doc(db, `company/${company}/managers`, userUID);
+    const userRef = doc(db, `company/${company}/${dep}/${dep}`, userUID);
 
   const userDoc = await getDoc(userRef);
   const userData = userDoc.data();
@@ -95,6 +96,7 @@ const userUID = sessionStorage.getItem('userUID');
 
 
 const company=sessionStorage.getItem('company');
+const dep=sessionStorage.getItem('dep');
 
 const userUID=sessionStorage.getItem('userUID');
 if (!userUID) {
@@ -106,7 +108,7 @@ if (!userUID) {
   const pro=document.getElementById('profile');
   
   // Fetch user data from Firestore using userUID
-  const userRef = doc(db, `company/${company}/managers`, userUID);
+  const userRef = doc(db, `company/${company}/${dep}/${dep}`);
   const userDoc = await getDoc(userRef);
   const userData = userDoc.data();
 
@@ -127,8 +129,9 @@ if (!userUID) {
   // document.getElementById("userPhoto").src = userData.photoURL || "default-profile-pic.png"; // Fallback to default image
   document.getElementById("dob").innerText = "Date of birth: "+userData.Dob;
   document.getElementById("userMobile").innerText = "Mobile: "+userData.mobileNumber || "Not provided";
-  document.getElementById('role').innerText=userData.Role|| "";
+  document.getElementById('role').innerText="Role:  "+userData.Role|| "";
   document.getElementById('company').innerText=userData.Company|| "";
+  document.getElementById('dep').innerText="Department: "+userData.department||"";
   setTimeout(() => {
     // console.log('This will be logged after 2 seconds');
    // 2000 ms = 2 seconds

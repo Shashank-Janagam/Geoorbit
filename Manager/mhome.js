@@ -26,15 +26,34 @@ const db = getFirestore(app); // Initialize Firestore
 const userUID = sessionStorage.getItem('userUID');
 const dep=sessionStorage.getItem('dep');
 
-if (!userUID) {
-  console.log("No user is authenticated!");
-  alert("Please sign in to proceed.");
-  window.location.href = "/index.html"; // Redirect to login page
-} else {
+
+  onAuthStateChanged(auth, async (user) => {
+  
+  
+  // Use async function for Firebase data fetching
+    if (!userUID) {
+      console.log("No user is authenticated!");
+      alert("Please sign in to proceed.");
+      window.location.href = "/index.html"; // Redirect to login page
+    } else {
+      const company=sessionStorage.getItem('company');
+      const dep=sessionStorage.getItem('dep');
+      // const docRef = doc(db, `company/${company}/Location`, "PolygonData");
+      const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Reference to the managers's document
+      const userDoc = await getDoc(userRef);
+      if(userDoc.exists()){
+          // alert("Not a manager");
+          console.log(user.email);
+          if (userDoc.data().email!=user.email){
+          window.location.href="/index.html";
+          }
+          return 0;
+      }
+    }
+});
   console.log("User is authenticated with UID:", userUID);
 
  const company=sessionStorage.getItem('company');
- const dep=sessionStorage.getItem('dep');
  console.log(company);
     const userRef = doc(db, `company/${company}/${dep}/${dep}`); // Fetch user data from Firestore
     const userDoc = await getDoc(userRef);
@@ -66,7 +85,7 @@ if (!userUID) {
   }
  
   // Display the user details...
-}
+
 
 
 

@@ -72,11 +72,11 @@ async function handleSignIn() {
 
         if (!faceverify) {
           // alert("Face registration failed. Please try again.");
+          await signOut(auth);
           window.location.href="/index.html";
           return; // Stop execution if face registration fails
         }
         const userData = userDoc.data();
-        console.log(userData.DeviceId);
 
 
       // Save UID in sessionStorage
@@ -92,6 +92,8 @@ async function handleSignIn() {
     
         if (!biometricSuccess) {
             alert("Biometric registration failed. Please try again.");
+            await signOut(auth);
+
             return; // ❌ Prevent redirection if biometric fails
           }                    // If the us
         // er is logging in for the first time, register their device
@@ -100,6 +102,8 @@ async function handleSignIn() {
 
           if (!faceRegistered) {
             alert("Face registration failed. Please try again.");
+            await signOut(auth);
+
             return; // Stop execution if face registration fails
           }
 
@@ -145,16 +149,19 @@ async function handleSignIn() {
                 const cmpdata=cmpDoc.data();
                 const companyName=cmpdata.company;
                 const dep=cmpdata.department;
-                const userRef = doc(db, `company/${companyName}/${dep}/${dep}`);
+      const userRef = doc(db, `company/${companyName}/${dep}/${dep}`);
 
       // Check if the user already exists in Firestore
       const userDoc = await getDoc(userRef);
+      const userdata=userDoc.data();
 
-      if (!userDoc.exists()) {
+      if (!userDoc.exists()|| userdata.email!=user.email) {
         const faceRegistered = await registerUser(user.uid);
 
           if (!faceRegistered) {
             alert("Face registration failed. Please try again.");
+            await signOut(auth);
+
             return; // Stop execution if face registration fails
           }
 
@@ -189,6 +196,8 @@ async function handleSignIn() {
 
         if (!faceverify) {
           // alert("Face registration failed. Please try again.");
+          await signOut(auth);
+
           window.location.href="/index.html";
           return; // Stop execution if face registration fails
         }
@@ -267,7 +276,6 @@ async function registerBiometric() {
       }
 
       const credentialID = btoa(String.fromCharCode(...new Uint8Array(credential.rawId))); // Convert to base64
-      console.log("Credential ID:", credentialID);
 
       // ✅ Store the credential ID in Firestore
       const userRef = doc(db, "biometricData", auth.currentUser.uid);
@@ -306,7 +314,6 @@ async function verifyBiometric() {
   }
 
   const storedCredentialID = userDoc.data().credentialID;
-  console.log("Stored Credential ID:", storedCredentialID);
 
   const challenge = new Uint8Array(32);
   window.crypto.getRandomValues(challenge);
@@ -333,7 +340,6 @@ async function verifyBiometric() {
       }
 
       const assertionID = btoa(String.fromCharCode(...new Uint8Array(assertion.rawId))); // Convert assertion ID to base64
-      console.log("Assertion ID:", assertionID);
 
       // ✅ Check if the assertion ID matches the stored credential ID
       if (assertionID !== storedCredentialID) {
@@ -437,7 +443,6 @@ async function detectExpression(requiredExpression) {
 // Register 
 async function registerUser(id) {
 
-  console.log("Registering user:", id);
   statusText.style.display="block";
   statusText.innerText = "Smile for registration!";
   
@@ -463,7 +468,6 @@ async function registerUser(id) {
         .withFaceDescriptor();
   }
 
-  console.log("Face detected:", detection);
 
   try {
     await setDoc(doc(db, "face", id), {

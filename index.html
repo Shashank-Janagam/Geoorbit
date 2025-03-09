@@ -57,4 +57,29 @@
 
     
 </body>
+<script type="module">
+    // Import Firebase modules
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCib5ywnEJvXXIePdWeKZtrKMIi2-Q_9sM",
+  authDomain: "geo-orbit-ed7a7.firebaseapp.com",
+  databaseURL: "https://geo-orbit-ed7a7-default-rtdb.firebaseio.com",
+  projectId: "geo-orbit-ed7a7",
+  storageBucket: "geo-orbit-ed7a7.firebasestorage.app",
+  messagingSenderId: "807202826514",
+  appId: "1:807202826514:web:5630f581f6f9dff46aebcb",
+  measurementId: "G-H15DN69132"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+        await signOut(auth);
+
+</script>
 </html>

@@ -47,14 +47,12 @@ if (!userUID) {
 
     if (userDoc.exists()) {
       // User data exists, retrieve and display it
-       userData = userDoc.data();
-      console.log("User data:", userData);
-
-    
+       userData = userDoc.data();    
       document.getElementById("logo").src = userData.photoURL || "default-profile-pic.png"; // Fallback to default image
       // console.log(userData.age);
     } else {
       console.log("No user data found in Firestore.");
+
     }
   } catch (error) {
     console.error("Error fetching user data from Firestore:", error);
