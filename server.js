@@ -18,37 +18,34 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 
-// ✅ Configure WebSockets (Ensure compatibility)
+// ✅ Enable CORS for Frontend (Netlify)
+app.use(cors({
+    origin: "https://geoorbit.netlify.app",
+    methods: ["GET", "POST"],
+    credentials: true
+}));
+
+// ✅ Set up WebSockets with CORS Fix
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow frontend connections
+        origin: "https://geoorbit.netlify.app",
         methods: ["GET", "POST"],
-        credentials: true,
-    },
-    transports: ["websocket", "polling"], // Explicitly set transports
+        credentials: true
+    }
 });
-
-// ✅ Enable CORS
-app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
-    credentials: true,
-}));
 
 // ✅ Serve static files from "public"
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ PeerJS Server Setup
+// ✅ PeerJS Server Setup (Fix 404 Error)
 const peerServer = ExpressPeerServer(server, {
-    debug: true, // Enable debugging logs
+    debug: true,
     path: "/peerjs",
-    allow_discovery: true,
+    allow_discovery: true
 });
 app.use("/peerjs", peerServer);
-console.log("✅ PeerJS server initialized at /peerjs");
 
-// ✅ Home route (generates a unique meeting ID)
+// ✅ Serve the home route (generate a unique meeting ID)
 app.get("/", (req, res) => {
     res.redirect(`/${uuidV4()}`);
 });
@@ -57,7 +54,7 @@ app.get("/", (req, res) => {
 app.get("/:room", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "meet.html"), (err) => {
         if (err) {
-            console.error("❌ Error sending file:", err);
+            console.error("Error sending file:", err);
             res.status(500).send("Meeting page could not be loaded.");
         }
     });
@@ -65,18 +62,22 @@ app.get("/:room", (req, res) => {
 
 // ✅ WebSocket Connection Handling
 io.on("connection", (socket) => {
-    console.log("🟢 New WebSocket connection established");
+    console.log("New user connected");
 
     socket.on("join-room", (roomId, userId) => {
         socket.join(roomId);
-        console.log(`👤 User ${userId} joined room ${roomId}`);
+        console.log(`User ${userId} joined room ${roomId}`);
 
         socket.to(roomId).emit("user-connected", userId);
 
         socket.on("disconnect", () => {
-            console.log(`❌ User ${userId} disconnected`);
             socket.to(roomId).emit("user-disconnected", userId);
         });
+    });
+
+    // ✅ Chat Messaging System
+    socket.on("message", ({ roomId, message, userId }) => {
+        io.to(roomId).emit("receive-message", { message, userId });
     });
 });
 
