@@ -18,26 +18,27 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 
-// ✅ Enable CORS for Frontend (Netlify)
+// ✅ Enable CORS
 app.use(cors({
     origin: "https://geoorbit.netlify.app",
     methods: ["GET", "POST"],
     credentials: true
 }));
 
-// ✅ Set up WebSockets with CORS Fix
+// ✅ Set up WebSockets (Fix Invalid Frame Header)
 const io = new Server(server, {
     cors: {
         origin: "https://geoorbit.netlify.app",
         methods: ["GET", "POST"],
         credentials: true
-    }
+    },
+    transports: ["websocket", "polling"], // ✅ Fix WebSocket issues
 });
 
-// ✅ Serve static files from "public"
+// ✅ Serve static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ PeerJS Server Setup (Fix 404 Error)
+// ✅ PeerJS Server Setup (Fix 404 Issue)
 const peerServer = ExpressPeerServer(server, {
     debug: true,
     path: "/peerjs",
@@ -45,12 +46,12 @@ const peerServer = ExpressPeerServer(server, {
 });
 app.use("/peerjs", peerServer);
 
-// ✅ Serve the home route (generate a unique meeting ID)
+// ✅ Generate Unique Meeting ID
 app.get("/", (req, res) => {
     res.redirect(`/${uuidV4()}`);
 });
 
-// ✅ Serve the meeting page
+// ✅ Serve Meeting Page
 app.get("/:room", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "meet.html"), (err) => {
         if (err) {
@@ -81,7 +82,7 @@ io.on("connection", (socket) => {
     });
 });
 
-// ✅ Dynamic port for deployment
+// ✅ Dynamic Port for Deployment
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);

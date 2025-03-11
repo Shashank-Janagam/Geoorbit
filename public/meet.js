@@ -1,10 +1,10 @@
-// ✅ Set up Socket.io with the correct backend URL
-const BACKEND_URL = "https://geoorbit.onrender.com"; // Make sure this is correct
-const socket = io("https://geoorbit.onrender.com", {
+// ✅ Ensure WebSocket connection is properly set
+const BACKEND_URL = "https://geoorbit.onrender.com";
+
+const socket = io(BACKEND_URL, {
     transports: ["websocket", "polling"],
     withCredentials: true
 });
-
 
 const ROOM_ID = window.location.pathname.substring(1);
 const videoGrid = document.getElementById("video-grid");
@@ -24,7 +24,13 @@ const peer = new Peer(undefined, {
     host: "geoorbit.onrender.com",
     secure: true,
     port: 443,
-    path: "/peerjs", // ✅ Ensure path is set correctly
+    path: "/peerjs", // ✅ Ensure correct path
+    config: {
+        iceServers: [
+            { urls: "stun:stun.l.google.com:19302" }, // ✅ Public STUN Server
+            { urls: "stun:stun1.l.google.com:19302" },
+        ],
+    }
 });
 
 // ✅ Show Meeting ID
@@ -38,7 +44,7 @@ peer.on("open", (id) => {
     socket.emit("join-room", ROOM_ID, id);
 });
 
-// ✅ Get User Media (Camera & Mic)
+// ✅ Handle User Media
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
@@ -47,7 +53,6 @@ navigator.mediaDevices.getUserMedia({
     myStream = stream;
     addVideoStream(myVideo, stream, "You");
 
-    // ✅ Handle Incoming Calls
     peer.on("call", (call) => {
         console.log(`📞 Incoming call from ${call.peer}`);
         call.answer(myStream);
@@ -66,15 +71,13 @@ navigator.mediaDevices.getUserMedia({
         peers[call.peer] = call;
     });
 
-    // ✅ Handle New Users
     socket.on("user-connected", (userId) => {
         console.log(`🆕 New user connected: ${userId}`);
         setTimeout(() => {
             connectToNewUser(userId, myStream);
-        }, 1000); // ✅ Delay to ensure PeerJS is ready
+        }, 1000);
     });
 
-    // ✅ Handle User Disconnection
     socket.on("user-disconnected", (userId) => {
         console.log(`❌ User disconnected: ${userId}`);
         if (peers[userId]) peers[userId].close();
@@ -86,12 +89,12 @@ navigator.mediaDevices.getUserMedia({
 // ✅ Function to Add Video Stream
 function addVideoStream(video, stream, userId = "Unknown") {
     console.log(`🎥 Adding video for ${userId}`);
-    
+
     video.srcObject = stream;
     video.setAttribute("data-user", userId);
     video.setAttribute("autoplay", true);
-    video.setAttribute("playsinline", true); // Prevent fullscreen on mobile
-    
+    video.setAttribute("playsinline", true);
+
     video.addEventListener("loadedmetadata", () => {
         video.play();
         console.log(`▶️ Playing video for ${userId}`);
@@ -99,12 +102,11 @@ function addVideoStream(video, stream, userId = "Unknown") {
 
     document.getElementById("video-grid").appendChild(video);
 
-    // 🔥 Force reflow to ensure rendering
     videoGrid.style.display = "none";
     setTimeout(() => {
         videoGrid.style.display = "flex";
     }, 50);
-    
+
     console.log(`📌 Total Videos: ${videoGrid.children.length}`);
 }
 
@@ -131,42 +133,7 @@ function connectToNewUser(userId, stream) {
     peers[userId] = call;
 }
 
-// ✅ Mute / Unmute
-function muteUnmute() {
-    const enabled = myStream.getAudioTracks()[0].enabled;
-    myStream.getAudioTracks()[0].enabled = !enabled;
-}
-
-// ✅ Video On / Off
-function videoOnOff() {
-    const enabled = myStream.getVideoTracks()[0].enabled;
-    myStream.getVideoTracks()[0].enabled = !enabled;
-}
-
-// ✅ Share Screen
-function shareScreen() {
-    navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
-        console.log("📺 Screen sharing started");
-        const screenVideo = document.createElement("video");
-        addVideoStream(screenVideo, stream, "Screen");
-
-        screenStream = stream;
-        screenStream.getTracks()[0].onended = () => {
-            console.log("❌ Screen sharing stopped");
-            screenVideo.remove();
-        };
-    }).catch((err) => {
-        console.error("❌ Error sharing screen:", err);
-    });
-}
-
-// ✅ Copy Room Link
-function copyRoomLink() {
-    navigator.clipboard.writeText(window.location.href);
-    alert("✅ Room link copied!");
-}
-
-// ✅ Send Chat Message
+// ✅ Handle Chat Messaging
 sendButton.addEventListener("click", sendMessage);
 chatInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendMessage();
@@ -181,20 +148,12 @@ function sendMessage() {
     chatInput.value = "";
 }
 
-// ✅ Append Chat Message
+socket.on("receive-message", ({ message, userId }) => {
+    appendMessage(`<b>User ${userId}:</b> ${message}`);
+});
+
 function appendMessage(message) {
     const msgElement = document.createElement("p");
     msgElement.innerHTML = message;
     chatBox.appendChild(msgElement);
 }
-
-// ✅ Toggle Chat
-function toggleChat() {
-    const chatContainer = document.getElementById("chat-container");
-    chatContainer.style.display = chatContainer.style.display === "none" ? "block" : "none";
-}
-
-// ✅ Receive Chat Messages
-socket.on("receive-message", ({ message, userId }) => {
-    appendMessage(`<b>User ${userId}:</b> ${message}`);
-});
