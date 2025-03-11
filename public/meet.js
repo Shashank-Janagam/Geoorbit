@@ -19,11 +19,12 @@ const peers = {};
 
 // ✅ Use a Free PeerJS Server
 const peer = new Peer(undefined, {
-    host: "geoorbit.onrender.com",  // Free public PeerJS server
+    host: "geoorbit.onrender.com",
     secure: true,
     port: 443,
-    path: "/"
+    path: "/peerjs",
 });
+
 
 // ✅ Show Meeting ID
 peer.on("open", (id) => {
