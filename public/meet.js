@@ -19,7 +19,7 @@ const peers = {};
 
 // ✅ Use a Free PeerJS Server
 const peer = new Peer(undefined, {
-    host: "peerjs-server.herokuapp.com",  // Free public PeerJS server
+    host: "https://geoorbit.onrender.com",  // Free public PeerJS server
     secure: true,
     port: 443,
     path: "/"
