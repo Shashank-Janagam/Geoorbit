@@ -4,9 +4,6 @@ import { Server } from "socket.io";
 import { v4 as uuidV4 } from "uuid";
 import path from "path";
 import { fileURLToPath } from "url";
-import cors from "cors"; // Import cors module
-
-app.use(cors()); // Enable CORS for all requests
 
 // Convert __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -45,5 +42,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(3000, () => {
-    console.log("Server running at https://geoorbit.netlify.app:3000");
+    console.log("Server running at https://vv127g59-3000.inc1.devtunnels.ms:3000");
 });
