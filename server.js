@@ -18,18 +18,15 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 
-// ✅ Configure WebSockets with proper transport settings
+// ✅ Configure WebSockets (Ensure compatibility)
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow frontend to connect (update for security)
+        origin: "*", // Allow frontend connections
         methods: ["GET", "POST"],
         credentials: true,
     },
-    transports: ["websocket", "polling"], // Ensure WebSocket is supported
+    transports: ["websocket", "polling"], // Explicitly set transports
 });
-
-// ✅ Serve static files from "public"
-app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ Enable CORS
 app.use(cors({
@@ -39,17 +36,19 @@ app.use(cors({
     credentials: true,
 }));
 
+// ✅ Serve static files from "public"
+app.use(express.static(path.join(__dirname, "public")));
+
 // ✅ PeerJS Server Setup
 const peerServer = ExpressPeerServer(server, {
     debug: true, // Enable debugging logs
     path: "/peerjs",
     allow_discovery: true,
 });
-
 app.use("/peerjs", peerServer);
-console.log("✅ PeerJS server initialized on /peerjs");
+console.log("✅ PeerJS server initialized at /peerjs");
 
-// ✅ Serve the home route (generate a unique meeting ID)
+// ✅ Home route (generates a unique meeting ID)
 app.get("/", (req, res) => {
     res.redirect(`/${uuidV4()}`);
 });
@@ -66,7 +65,7 @@ app.get("/:room", (req, res) => {
 
 // ✅ WebSocket Connection Handling
 io.on("connection", (socket) => {
-    console.log("🟢 New user connected");
+    console.log("🟢 New WebSocket connection established");
 
     socket.on("join-room", (roomId, userId) => {
         socket.join(roomId);
