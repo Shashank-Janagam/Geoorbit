@@ -15,7 +15,17 @@
   background-position: center;
   border-radius: 50%;
 }
-
+#g{
+  margin-left: 40%;
+  height: 100%;
+  margin-top: 10px;
+  transition: opacity 0.5s ease; /* Smooth fade effect */
+  cursor: pointer;
+ 
+}
+#g:hover{
+  transform: scale(1.05);
+}
 .contact {
   position: relative;
   margin-bottom: 1rem;

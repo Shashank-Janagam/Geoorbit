@@ -1,0 +1,298 @@
+
+#con{
+    margin-top: 2%;
+    width: 100%;
+    height: 500px;
+    display: flex;
+    gap: 20px;
+    /* background-color: white; */
+}
+#active{
+    height: 95%;
+    width: 400px;
+    background-color: white;
+    margin-left: 2%;
+    border-radius: 8px;
+    overflow: scroll;
+    color: black;
+    scrollbar-width: none;
+    text-align: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: large;
+    
+}
+.meeting-card{
+    text-align: left;
+    background-color: rgb(184, 226, 194);
+    border-radius: 8px;
+    width: 90%;
+    margin-left: 5%;
+
+
+}
+.meeting-details{
+    margin-left: 5%;
+    display: flex;
+margin-top: 5px;
+}
+#d1{
+    width: 75%;
+}
+.join-meeting-btn{
+    align-self:center;
+    margin-top: 50%;
+    border-radius: 15px;
+    transition: opacity 0.5s ease; /* Smooth fade effect */
+    cursor: pointer;
+}
+.end-meeting-btn{
+    align-self:center;
+    margin-top: 50%;
+    background-color: rgb(252, 164, 141);
+    border-radius: 15px;
+    transition: opacity 0.5s ease; /* Smooth fade effect */
+    cursor: pointer;
+}
+.join-meeting-btn:hover{
+    transform: scale(1.02);
+}
+.end-meeting-btn:hover{
+    transform: scale(1.02);
+}
+#create{
+    border-radius: 8px;
+    width: 400px;
+    /* background-color: white; */
+    /* height: 50px; */
+}
+#bns{
+    margin-left: 10%;
+    display: block;
+    height: auto;
+    gap: 20%;
+
+}
+.cc{
+    border-radius: 10px;
+    transition: opacity 0.5s ease; /* Smooth fade effect */
+    cursor: pointer;
+    margin-bottom: 5%;
+    min-width: 300px;
+}
+.ins {
+    box-sizing: border-box;
+    flex-basis: 4rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem 0 0;
+  }
+.ins textarea {
+    
+    background-image: none;
+    background-color: white;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    border-radius: 1.0005rem;
+    flex-grow: 2;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1), 0rem 1rem 1rem -1rem rgba(0, 0, 0, 0.2);
+    font-family: Red hat Display, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.025em; 
+     border: none;
+     height: 40%;
+     scrollbar-width: none;
+     resize: none; /* Completely disable resizing */
+    border: none;
+    font-weight:500;
+    box-sizing: border-box;
+    outline: none;
+    margin-top: 10%;
+
+  
+  }
+.cc:hover{
+    transform: scale(1.005);
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    
+}
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 10px;
+    max-height: 700px;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+.employee-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: 0.3s;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+}
+
+.employee-card:hover {
+    background-color: #e0e0e0;
+}
+
+.employee-card.selected {
+    background-color: #caf0d3; /* ✅ Green Selection */
+    /* border: 2px solid #28a745; ✅ Green Border */
+}
+
+.employee-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.employee-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.employee-name {
+    flex: 1;
+    text-align: left;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.employee-role {
+    flex-shrink: 0;
+    text-align: right;
+    color: gray;
+}
+/* General Styles */
+
+
+/* Meeting Card */
+.meeting-card {
+    max-width: 320px;
+    background:white;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    margin: 20px;
+}
+
+/* Header */
+.meeting-header {
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.creator-info .label {
+    font-weight: bold;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.creator-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.creator-role {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Meeting Details */
+.meeting-body {
+    padding: 15px 0;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.meeting-body p {
+    margin: 10px 0;
+}
+
+.meeting-body span {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Footer */
+.meeting-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 15px;
+}
+
+/* Buttons */
+.join-btn, .end-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-size: 16px;
+    color: white;
+}
+
+.join-btn {
+    background: #6cc080;
+    box-shadow: 0px 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.end-btn {
+    background: #e66e7a;
+    box-shadow: 0px 4px 8px rgba(220, 53, 69, 0.3);
+    display: none; /* Controlled dynamically */
+}
+
+.join-btn:hover {
+    background: #7ecf8f;
+    transform: scale(1.005);
+}
+
+.end-btn:hover {
+    background: #f7949e;
+    transform: scale(1.005);
+}
+@media (max-width: 768px) {
+    #con{
+        margin-top: 2%;
+        width: 100%;
+        height: 500px;
+        display: block;
+        gap: 20px;
+        /* background-color: white; */
+    }
+    
+}

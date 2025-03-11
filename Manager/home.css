@@ -477,3 +477,9 @@ font-family: "Dancing Script", serif;
   background-size: contain;
 
 }
+#gmeet{
+  background-image: url("/Images/gmeeet.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+
+}

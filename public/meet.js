@@ -18,6 +18,7 @@ const peer = new Peer(undefined, {
     host: "geoorbit.onrender.com",
     secure: true,
     port: 443,
+    path: "/peerjs",
 });
 
 peer.on("open", (id) => {

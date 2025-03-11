@@ -117,6 +117,11 @@
       Leaves
     </h5>    
   </div>
+  <div id="gmeet" class="emplo">
+    <h5 id=  "mp">
+      Google Meet
+    </h5>    
+  </div>
   </div>
  <div id="tobe"></div>
  <footer id="foot">
@@ -151,7 +156,15 @@
       }, 100); // Duration of the fade-out
     });
 
+    document.getElementById('gmeet').addEventListener('click', () => {
+      const content = document.getElementById('contains');
+      content.classList.add('fade-out');
+      setTimeout(() => {
+        // window.location.href = 'location.html';
+        window.location.href = 'Gmeet.html';
 
+      }, 100); // Duration of the fade-out
+    });
     document.getElementById('history').addEventListener('click', () => {
       setTimeout(() => {
         // window.location.href = 'location.html';

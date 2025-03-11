@@ -219,6 +219,7 @@ let datearray=[];
 }
     }
 });
+
 try{
 const leaves = collection(db, `company/${company}/${dep}/${dep}/Leave_Approvals`);
 const q = query(leaves, where("EmployeeID", "==", userEmail.replace("@gmail.com","")));

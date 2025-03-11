@@ -1,83 +1,38 @@
 import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
-import { v4 as uuidV4 } from "uuid";
-import path from "path";
-import { fileURLToPath } from "url";
-import cors from "cors";
+import { google } from "googleapis";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-// Convert __dirname for ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
-const server = createServer(app);
+app.use(express.json());
 
-// ✅ Fix CORS Issues for Netlify & WebSockets
-app.use(cors({
-    origin: ["https://geoorbit.netlify.app", "wss://geoorbit.netlify.app"],
-    methods: ["GET", "POST"],
-    credentials: true
-}));
+const auth = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.REDIRECT_URI
+);
+auth.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-// ✅ WebSockets with Fixes
-const io = new Server(server, {
-    cors: {
-        origin: ["https://geoorbit.netlify.app", "wss://geoorbit.netlify.app"],
-        methods: ["GET", "POST"],
-        credentials: true
-    },
-    transports: ["websocket"], // ✅ Fix "Invalid frame header"
-});
+app.get("/create-meet", async (req, res) => {
+    try {
+        const calendar = google.calendar({ version: "v3", auth });
+        const event = {
+            summary: "Meeting",
+            start: { dateTime: new Date().toISOString(), timeZone: "UTC" },
+            end: { dateTime: new Date(Date.now() + 3600000).toISOString(), timeZone: "UTC" },
+            conferenceData: { createRequest: { requestId: "meeting-" + Date.now() } },
+        };
 
-// ✅ Serve static files from "public"
-app.use(express.static(path.join(__dirname, "public")));
-
-// ✅ Generate Unique Meeting ID for Home Route
-app.get("/", (req, res) => {
-    res.redirect(`/${uuidV4()}`);
-});
-
-// ✅ Serve Meeting Page
-app.get("/:room", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "meet.html"));
-});
-
-// ✅ WebSocket Connection Handling
-io.on("connection", (socket) => {
-    console.log("✅ WebSocket connected:", socket.id);
-
-    socket.on("join-room", (roomId, userId) => {
-        socket.join(roomId);
-        console.log(`📢 User ${userId} joined room ${roomId}`);
-        socket.to(roomId).emit("user-connected", userId);
-
-        socket.on("disconnect", () => {
-            console.log(`❌ User ${userId} disconnected`);
-            socket.to(roomId).emit("user-disconnected", userId);
+        const response = await calendar.events.insert({
+            calendarId: "primary",
+            resource: event,
+            conferenceDataVersion: 1,
         });
-    });
 
-    // ✅ Chat Messaging
-    socket.on("message", ({ roomId, message, userId }) => {
-        io.to(roomId).emit("receive-message", { message, userId });
-    });
-
-    // ✅ Fix for Render WebSocket Timeout
-    const interval = setInterval(() => {
-        socket.emit("heartbeat", "ping");
-    }, 25000);
-
-    socket.on("disconnect", () => {
-        clearInterval(interval);
-    });
+        res.json({ meetLink: response.data.hangoutLink });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// ✅ Start Server on Dynamic Port
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(5000, () => console.log("Server running on port 5000"));
