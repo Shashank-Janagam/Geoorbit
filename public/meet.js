@@ -1,9 +1,9 @@
-// ✅ Ensure WebSocket connection is properly set
-const BACKEND_URL = "https://geoorbit.onrender.com";
-
+// ✅ Set up Socket.io with the correct backend URL
+const BACKEND_URL = "https://geoorbit.onrender.com"; // ✅ Ensure this is correct
 const socket = io(BACKEND_URL, {
-    transports: ["websocket", "polling"],
-    withCredentials: true
+    transports: ["websocket", "polling"], // ✅ Fix WebSocket connection issue
+    withCredentials: true,
+    secure: true,
 });
 
 const ROOM_ID = window.location.pathname.substring(1);
@@ -25,26 +25,16 @@ const peer = new Peer(undefined, {
     secure: true,
     port: 443,
     path: "/peerjs", // ✅ Ensure correct path
-    config: {
-        iceServers: [
-            { urls: "stun:stun.l.google.com:19302" }, // ✅ Public STUN Server
-            { urls: "stun:stun1.l.google.com:19302" },
-        ],
-    }
 });
 
 // ✅ Show Meeting ID
 peer.on("open", (id) => {
-    if (!id) {
-        console.error("❌ Peer ID not received!");
-        return;
-    }
     console.log("✅ Peer Connected. ID:", id);
     meetingIdDisplay.innerText = `Meeting ID: ${ROOM_ID}`;
     socket.emit("join-room", ROOM_ID, id);
 });
 
-// ✅ Handle User Media
+// ✅ Get User Media (Camera & Mic)
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
@@ -53,6 +43,7 @@ navigator.mediaDevices.getUserMedia({
     myStream = stream;
     addVideoStream(myVideo, stream, "You");
 
+    // ✅ Handle Incoming Calls
     peer.on("call", (call) => {
         console.log(`📞 Incoming call from ${call.peer}`);
         call.answer(myStream);
@@ -71,6 +62,7 @@ navigator.mediaDevices.getUserMedia({
         peers[call.peer] = call;
     });
 
+    // ✅ Handle New Users
     socket.on("user-connected", (userId) => {
         console.log(`🆕 New user connected: ${userId}`);
         setTimeout(() => {
@@ -78,6 +70,7 @@ navigator.mediaDevices.getUserMedia({
         }, 1000);
     });
 
+    // ✅ Handle User Disconnection
     socket.on("user-disconnected", (userId) => {
         console.log(`❌ User disconnected: ${userId}`);
         if (peers[userId]) peers[userId].close();
@@ -89,31 +82,25 @@ navigator.mediaDevices.getUserMedia({
 // ✅ Function to Add Video Stream
 function addVideoStream(video, stream, userId = "Unknown") {
     console.log(`🎥 Adding video for ${userId}`);
-
+    
     video.srcObject = stream;
     video.setAttribute("data-user", userId);
     video.setAttribute("autoplay", true);
     video.setAttribute("playsinline", true);
-
+    
     video.addEventListener("loadedmetadata", () => {
         video.play();
         console.log(`▶️ Playing video for ${userId}`);
     });
 
     document.getElementById("video-grid").appendChild(video);
-
-    videoGrid.style.display = "none";
-    setTimeout(() => {
-        videoGrid.style.display = "flex";
-    }, 50);
-
-    console.log(`📌 Total Videos: ${videoGrid.children.length}`);
 }
 
 // ✅ Connect to New User
 function connectToNewUser(userId, stream) {
     console.log(`📞 Calling ${userId}`);
     const call = peer.call(userId, stream);
+
     if (!call) {
         console.error("❌ Call failed:", userId);
         return;
@@ -133,7 +120,7 @@ function connectToNewUser(userId, stream) {
     peers[userId] = call;
 }
 
-// ✅ Handle Chat Messaging
+// ✅ Send Chat Message
 sendButton.addEventListener("click", sendMessage);
 chatInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendMessage();
@@ -148,12 +135,15 @@ function sendMessage() {
     chatInput.value = "";
 }
 
-socket.on("receive-message", ({ message, userId }) => {
-    appendMessage(`<b>User ${userId}:</b> ${message}`);
-});
-
+// ✅ Append Chat Message
 function appendMessage(message) {
     const msgElement = document.createElement("p");
     msgElement.innerHTML = message;
     chatBox.appendChild(msgElement);
 }
+
+// ✅ Receive Chat Messages
+socket.on("receive-message", ({ message, userId }) => {
+    appendMessage(`<b>User ${userId}:</b> ${message}`);
+});
+ 
