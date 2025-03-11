@@ -1,7 +1,7 @@
 // ✅ Set up Socket.io with the correct backend URL
 const BACKEND_URL = "https://geoorbit.onrender.com"; // Make sure this is correct
 const socket = io(BACKEND_URL, {
-    transports: ["websocket", "polling"],
+    transports: ["polling"]
 });
 
 const ROOM_ID = window.location.pathname.substring(1);
