@@ -17,25 +17,37 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = createServer(app);
+
+// ✅ Configure WebSockets with proper transport settings
 const io = new Server(server, {
     cors: {
         origin: "*", // Allow frontend to connect (update for security)
         methods: ["GET", "POST"],
+        credentials: true,
     },
+    transports: ["websocket", "polling"], // Ensure WebSocket is supported
 });
 
 // ✅ Serve static files from "public"
 app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ Enable CORS
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+}));
 
 // ✅ PeerJS Server Setup
 const peerServer = ExpressPeerServer(server, {
+    debug: true, // Enable debugging logs
     path: "/peerjs",
     allow_discovery: true,
 });
+
 app.use("/peerjs", peerServer);
+console.log("✅ PeerJS server initialized on /peerjs");
 
 // ✅ Serve the home route (generate a unique meeting ID)
 app.get("/", (req, res) => {
@@ -46,7 +58,7 @@ app.get("/", (req, res) => {
 app.get("/:room", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "meet.html"), (err) => {
         if (err) {
-            console.error("Error sending file:", err);
+            console.error("❌ Error sending file:", err);
             res.status(500).send("Meeting page could not be loaded.");
         }
     });
@@ -54,15 +66,16 @@ app.get("/:room", (req, res) => {
 
 // ✅ WebSocket Connection Handling
 io.on("connection", (socket) => {
-    console.log("New user connected");
+    console.log("🟢 New user connected");
 
     socket.on("join-room", (roomId, userId) => {
         socket.join(roomId);
-        console.log(`User ${userId} joined room ${roomId}`);
+        console.log(`👤 User ${userId} joined room ${roomId}`);
 
         socket.to(roomId).emit("user-connected", userId);
 
         socket.on("disconnect", () => {
+            console.log(`❌ User ${userId} disconnected`);
             socket.to(roomId).emit("user-disconnected", userId);
         });
     });
@@ -71,5 +84,5 @@ io.on("connection", (socket) => {
 // ✅ Dynamic port for deployment
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
