@@ -1,7 +1,7 @@
 // ✅ Set up Socket.io with the correct backend URL
-const BACKEND_URL = "https://geoorbit.onrender.com"; // ⚠️ Replace with your Render backend URL
+const BACKEND_URL = "https://geoorbit.onrender.com"; // Make sure this is correct
 const socket = io(BACKEND_URL, {
-    transports: ["websocket", "polling"]
+    transports: ["websocket", "polling"],
 });
 
 const ROOM_ID = window.location.pathname.substring(1);
@@ -17,19 +17,22 @@ myVideo.muted = true;
 let myStream;
 const peers = {};
 
-// ✅ Use a Free PeerJS Server
+// ✅ Fix PeerJS Path Issue for Render
 const peer = new Peer(undefined, {
     host: "geoorbit.onrender.com",
     secure: true,
     port: 443,
-    path: "",
+    path: "/peerjs", // ✅ Ensure path is set correctly
 });
-
 
 // ✅ Show Meeting ID
 peer.on("open", (id) => {
+    if (!id) {
+        console.error("❌ Peer ID not received!");
+        return;
+    }
     console.log("✅ Peer Connected. ID:", id);
-    meetingIdDisplay.innerText = `Meeting ID: ${ROOM_ID}`; 
+    meetingIdDisplay.innerText = `Meeting ID: ${ROOM_ID}`;
     socket.emit("join-room", ROOM_ID, id);
 });
 
@@ -64,7 +67,9 @@ navigator.mediaDevices.getUserMedia({
     // ✅ Handle New Users
     socket.on("user-connected", (userId) => {
         console.log(`🆕 New user connected: ${userId}`);
-        connectToNewUser(userId, myStream);
+        setTimeout(() => {
+            connectToNewUser(userId, myStream);
+        }, 1000); // ✅ Delay to ensure PeerJS is ready
     });
 
     // ✅ Handle User Disconnection
