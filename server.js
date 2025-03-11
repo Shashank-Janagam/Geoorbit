@@ -6,7 +6,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
 import dotenv from "dotenv";
-import { ExpressPeerServer } from "peer";
 
 dotenv.config();
 
@@ -17,17 +16,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 
-// ✅ Fix CORS Issues
+// ✅ Fix CORS Issues for Netlify & WebSockets
 app.use(cors({
-    origin: ["https://geoorbit.netlify.app"], // Ensure frontend domain is correct
+    origin: ["https://geoorbit.netlify.app", "wss://geoorbit.netlify.app"],
     methods: ["GET", "POST"],
     credentials: true
 }));
 
-// ✅ WebSockets Fix (Force WebSockets Only)
+// ✅ WebSockets with Fixes
 const io = new Server(server, {
     cors: {
-        origin: "https://geoorbit.netlify.app",
+        origin: ["https://geoorbit.netlify.app", "wss://geoorbit.netlify.app"],
         methods: ["GET", "POST"],
         credentials: true
     },
@@ -36,14 +35,6 @@ const io = new Server(server, {
 
 // ✅ Serve static files from "public"
 app.use(express.static(path.join(__dirname, "public")));
-
-// ✅ PeerJS Server Fix
-const peerServer = ExpressPeerServer(server, {
-    debug: true,
-    path: "/peerjs",
-    allow_discovery: true
-});
-app.use("/peerjs", peerServer);
 
 // ✅ Generate Unique Meeting ID for Home Route
 app.get("/", (req, res) => {
@@ -76,14 +67,17 @@ io.on("connection", (socket) => {
     });
 
     // ✅ Fix for Render WebSocket Timeout
-    setInterval(() => {
+    const interval = setInterval(() => {
         socket.emit("heartbeat", "ping");
     }, 25000);
+
+    socket.on("disconnect", () => {
+        clearInterval(interval);
+    });
 });
 
-// ✅ Dynamic Port for Deployment
+// ✅ Start Server on Dynamic Port
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
-    

@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://geoorbit.onrender.com"; // Ensure this is correct
+const BACKEND_URL = "https://geoorbit.netlify.app"; // ✅ Proxy WebSocket via Netlify
 
 // ✅ Fix WebSocket Connection
 const socket = io(BACKEND_URL, {
@@ -52,52 +52,32 @@ navigator.mediaDevices.getUserMedia({
 
     socket.on("user-connected", (userId) => {
         setTimeout(() => {
-            connectToNewUser(userId, myStream);
+            const call = peer.call(userId, myStream);
+            const video = document.createElement("video");
+
+            call.on("stream", (userStream) => {
+                addVideoStream(video, userStream, userId);
+            });
+
+            call.on("close", () => {
+                video.remove();
+            });
+
+            peers[userId] = call;
         }, 1000);
     });
-
-    socket.on("user-disconnected", (userId) => {
-        if (peers[userId]) peers[userId].close();
-    });
-}).catch((err) => {
-    console.error("❌ Error accessing media:", err);
 });
 
-// ✅ Fix Video Streaming
-function addVideoStream(video, stream, userId = "Unknown") {
-    video.srcObject = stream;
-    video.setAttribute("data-user", userId);
-    video.setAttribute("autoplay", true);
-    video.setAttribute("playsinline", true);
+// ✅ Handle Disconnection
+socket.on("user-disconnected", (userId) => {
+    if (peers[userId]) peers[userId].close();
+});
 
+// ✅ Helper Function: Add Video Stream
+function addVideoStream(video, stream, userId) {
+    video.srcObject = stream;
     video.addEventListener("loadedmetadata", () => {
         video.play();
     });
-
-    document.getElementById("video-grid").appendChild(video);
+    document.getElementById("video-grid").append(video);
 }
-
-// ✅ Fix Chat
-document.getElementById("send-btn").addEventListener("click", sendMessage);
-document.getElementById("chat-input").addEventListener("keypress", (e) => {
-    if (e.key === "Enter") sendMessage();
-});
-
-function sendMessage() {
-    const message = document.getElementById("chat-input").value.trim();
-    if (!message) return;
-
-    socket.emit("message", { roomId: ROOM_ID, message, userId: peer.id });
-    appendMessage(`<b>You:</b> ${message}`);
-    document.getElementById("chat-input").value = "";
-}
-
-function appendMessage(message) {
-    const msgElement = document.createElement("p");
-    msgElement.innerHTML = message;
-    document.getElementById("chat-box").appendChild(msgElement);
-}
-
-socket.on("receive-message", ({ message, userId }) => {
-    appendMessage(`<b>User ${userId}:</b> ${message}`);
-});
