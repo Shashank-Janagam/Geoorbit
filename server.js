@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
 import dotenv from "dotenv";
+import { ExpressPeerServer } from "peer";
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,13 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ Enable CORS
 app.use(cors());
+
+// ✅ PeerJS Server Setup
+const peerServer = ExpressPeerServer(server, {
+    path: "/peerjs",
+    allow_discovery: true,
+});
+app.use("/peerjs", peerServer);
 
 // ✅ Serve the home route (generate a unique meeting ID)
 app.get("/", (req, res) => {
