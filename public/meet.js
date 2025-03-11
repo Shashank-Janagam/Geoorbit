@@ -1,4 +1,4 @@
-const socket = io("https://vv127g59-3000.inc1.devtunnels.ms/", {
+const socket = io("https://geoorbit.netlify.app", {
     transports: ["websocket", "polling"]
 });
 
@@ -17,7 +17,7 @@ const peers = {};
 
 // ✅ Initialize PeerJS
 const peer = new Peer(undefined, {
-    host: "0.peerjs.com",
+    host: "geoorbit.netlify.app",
     port: 443,
     secure: true,
     path: "/"
