@@ -1,4 +1,6 @@
-const socket = io("https://geoorbit.netlify.app", {
+// ✅ Set up Socket.io with the correct backend URL
+const BACKEND_URL = "https://geoorbit.onrender.com"; // ⚠️ Replace with your Render backend URL
+const socket = io(BACKEND_URL, {
     transports: ["websocket", "polling"]
 });
 
@@ -15,11 +17,11 @@ myVideo.muted = true;
 let myStream;
 const peers = {};
 
-// ✅ Initialize PeerJS
+// ✅ Use a Free PeerJS Server
 const peer = new Peer(undefined, {
-    host: "geoorbit.netlify.app",
-    port: 443,
+    host: "peerjs-server.herokuapp.com",  // Free public PeerJS server
     secure: true,
+    port: 443,
     path: "/"
 });
 
@@ -97,7 +99,6 @@ function addVideoStream(video, stream, userId = "Unknown") {
     
     console.log(`📌 Total Videos: ${videoGrid.children.length}`);
 }
-
 
 // ✅ Connect to New User
 function connectToNewUser(userId, stream) {
