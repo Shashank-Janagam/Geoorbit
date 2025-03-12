@@ -35,12 +35,12 @@ onAuthStateChanged(auth, async (user) => {
 
     }
 });
-    const mref = doc(db, `company/${company}/${dep}/${dep}`);
-    const mdoc = await getDoc(mref);
-    var mdata = mdoc.data();
-// ✅ Fetch Active Meetings
-// ✅ Fetch Active Meetings
 
+// ✅ Fetch Active Meetings
+// ✅ Fetch Active Meetings
+const mref = doc(db, `company/${company}/${dep}/${dep}`);
+const mdoc = await getDoc(mref);
+var mdata = mdoc.data();
 async function fetchActiveMeetings() {
     if (!company || !userUID) {
         alert("Invalid session! Redirecting...");
@@ -97,8 +97,7 @@ async function fetchActiveMeetings() {
             count=false;
 
             meetingDiv.innerHTML = `
-                
-    <div class="meeting-header">
+               <div class="meeting-header">
         <div class="creator-info">
             <p class="label">Created By:</p>
             <p class="creator-name">${createdBy}</p>
@@ -119,8 +118,6 @@ async function fetchActiveMeetings() {
             ❌ End Meeting
         </button>
     </div>
-
-
             `;
             
             // 🔹 Append to container
@@ -145,22 +142,20 @@ async function fetchActiveMeetings() {
 const instantMeetingBtn = document.getElementById('instant');
 const selectMembersModal = document.getElementById("selectMembersModal");
 const confirmMembersBtn = document.getElementById("confirmMembersBtn");
-const res = document.getElementById('textmessage');
 let selectedEmployees = new Set(); // Store selected employee IDs
 
 instantMeetingBtn.addEventListener("click", () => {
-    if (!res.value.trim()) {
-        alert("Enter the Purpose of the meeting");
-        return;
-    }
 
     // Open the modal to select members
     selectMembersModal.style.display = "block";
     loadEmployeeList();
 });
+let membersObj = {};
 
 // Wait for confirmation before creating the meeting
 confirmMembersBtn.addEventListener("click", async () => {
+    selectMembersModal.style.display = "none";
+
     console.log(selectedEmployees);
     if (selectedEmployees.size === 0) {
         alert("Select at least one employee for the meeting.");
@@ -168,14 +163,28 @@ confirmMembersBtn.addEventListener("click", async () => {
     }
 
     // ✅ Convert selected employees into an object & add creator
-    let membersObj = {};
     selectedEmployees.forEach(empID => {
         membersObj[empID] = true;
     });
 
-    membersObj[mdata.EmployeeID]=true;
 
-    const meetUrl = `https://meet.google.com/new`;
+    membersObj[mdata.EmployeeID] = true;
+
+    // ✅ Open the Google Meet page
+    let newMeetWindow = window.open("https://meet.google.com/new", '_blank', 'noopener,noreferrer');
+
+    // ✅ Display the meeting link modal after confirming members
+    document.getElementById("meetLinkModal").style.display = "block";
+});
+
+// ✅ Event listener for saving the Google Meet link
+document.getElementById("saveMeetLinkBtn").addEventListener("click", async () => {
+    let meetUrl = document.getElementById("meetLinkInput").value.trim();
+
+    if (!meetUrl || !meetUrl.includes("meet.google.com")) {
+        alert("Please enter a valid Google Meet link.");
+        return;
+    }
 
     try {
         await addDoc(collection(db, `company/${company}/${dep}/${dep}/Gmeet`), {
@@ -183,27 +192,23 @@ confirmMembersBtn.addEventListener("click", async () => {
             createdBy: auth.currentUser.displayName,
             date: new Date(),
             Status: "true",
-            purpose: res.value.trim(),
+            purpose: document.getElementById("textmessage").value.trim(),
             empuid: userUID,
             members: membersObj,
-            role:mdata.Role,  // ✅ Store selected members
+            role: mdata.Role, 
         });
 
-        // Clear input fields
-        res.value = "";
-        selectedEmployees.clear(); // ✅ Reset selections
-
-        selectMembersModal.style.display = "none"; // Close modal
-
-        // Open the Meet link
+        // ✅ Clear input fields
+        document.getElementById("textmessage").value = "";
+        selectedEmployees.clear();
         document.getElementById("selectMembersModal").style.display = "none";
-
-        window.open(meetUrl, '_blank', 'noopener,noreferrer');
+        document.getElementById("meetLinkModal").style.display = "none";
 
     } catch (error) {
         console.error("Error saving Meet link:", error);
     }
 });
+
 
 async function loadEmployeeList() {
     try {

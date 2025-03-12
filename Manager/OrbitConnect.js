@@ -40,12 +40,9 @@ if (!company || !userUID) {
     alert("User not authenticated!");
     window.location.href="/index.html";
 } else {
-    const userRef = doc(db, `company/${company}/${dep}/${dep}/Employees`, userUID);
+    const userRef = doc(db, `company/${company}/${dep}/${dep}`);
     const userDoc = await getDoc(userRef);
     var userData = userDoc.data();
-    const mref = doc(db, `company/${company}/${dep}/${dep}`);
-    const mdoc = await getDoc(mref);
-    var mdata = mdoc.data();
 }
 
 // 🔹 Get Online Time (IST)
@@ -53,28 +50,17 @@ if (!company || !userUID) {
 // Fetch time before using it
 timestamp: serverTimestamp() // Store Firebase server timestamp
 const chatscon = document.querySelector('.chats');
-
 async function displayAllEmployees() {
     try {
         const usersCollection = collection(db, `company/${company}/${dep}/${dep}/Employees`);
-        let employeeList = [];
-
-        // 🔹 Fetch the extra profile (e.g., manager or head)
-        const extraProfileRef = doc(db, `company/${company}/${dep}/${dep}`);
-        const extraProfileSnap = await getDoc(extraProfileRef);
-        let extraProfileData = null;
-
-        if (extraProfileSnap.exists()) {
-            extraProfileData = extraProfileSnap.data();
-        }
-
         onSnapshot(usersCollection, async (querySnapshot) => {
-            employeeList = []; // Reset list before adding employees
+            let employeeList = [];
 
             chatscon.innerHTML = ""; // Clear the chat container
 
-            const processEmployee = (employeeData) => {
-                console.log(employeeData.EmployeeID);
+            for (const doc of querySnapshot.docs) {
+                const employeeData = doc.data();
+
                 if (employeeData.EmployeeID !== userData.EmployeeID) {
                     const chatRoomID = generateChatRoomID(userData.EmployeeID, employeeData.EmployeeID);
                     const messagesRef = collection(db, `company/${company}/${dep}/${dep}/OrbitConnect/${chatRoomID}/messages`);
@@ -105,23 +91,12 @@ async function displayAllEmployees() {
                         renderEmployeeList(employeeList);
                     });
                 }
-            };
-
-            // 🔹 Process all employees
-            for (const doc of querySnapshot.docs) {
-                processEmployee(doc.data());
-            }
-
-            // 🔹 Process the extra profile if it exists
-            if (extraProfileData) {
-                processEmployee(extraProfileData);
             }
         });
     } catch (error) {
         console.error("Error fetching employees:", error);
     }
 }
-
 // Function to render employee list in real-time
 function renderEmployeeList(employeeList) {
     employeeList.sort((a, b) => b.lastTimestamp - a.lastTimestamp); // Sort by latest message timestamp
@@ -460,14 +435,12 @@ async function listenForUserMessages() {
                                     name: "Unknown Sender",
                                     photoURL: "https://via.placeholder.com/40"
                                 };
-                                 if(messageData.senderID==mdata.EmployeeID){
-                                        senderData=mdata;
-                                }
+
                                 if (!senderSnapshot.empty) {
                                     senderSnapshot.forEach(doc => {
                                         senderData = doc.data();
                                     });
-                                   
+        
                                 }
                                 notificationSound.play().catch(error => console.log("Audio play blocked:", error));
 
@@ -529,8 +502,6 @@ function hideToast() {
 // Start Listening for Messages
 listenForUserMessages();
 
-
-// ✅ Start Listening for Messages Only for the User
 const messagesRef = collection(db, "messages");  // Correct way to reference a collection
 const q = query(messagesRef, where("chatId", "==", "12345"));
 
@@ -541,7 +512,6 @@ const unsubscribe = onSnapshot(q, (snapshot) => {
     }
   });
 });
-  
   document.getElementById('dhome').addEventListener('click', () => {
     const content = document.getElementById('profile');
     content.classList.add('fade-out');

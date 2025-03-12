@@ -465,6 +465,13 @@ font-family: "Dancing Script", serif;
   background-size: contain;
 
 }
+
+#leaves{
+  background-image: url("/Images/leave.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+
+}
 #employees{
   background-image: url("/Images/employees.avif");
   background-repeat: no-repeat;
@@ -475,6 +482,13 @@ font-family: "Dancing Script", serif;
   background-image: url("/Images/attend.avif");
   background-repeat: no-repeat;
   background-size: contain;
+
+}
+#connect{
+  background-image: url("/Images/orbitanimated.gif");
+  background-repeat: no-repeat;
+  background-size: contain;
+
 
 }
 #gmeet{

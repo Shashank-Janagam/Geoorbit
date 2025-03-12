@@ -95,10 +95,11 @@
     </h5>
     
   </div>
-  <div id="setloc" class="emplo">
+  <div id="connect" class="emplo">
     <h5 id=  "mp">
-      Set Location
+      OrbitConnect
     </h5>
+    
     
   </div>
   <div id="history" class="emplo">
@@ -121,6 +122,13 @@
     <h5 id=  "mp">
       Google Meet
     </h5>    
+  </div>
+  <div id="setloc" class="emplo">
+    <h5 id=  "mp">
+      Set Location
+    </h5>
+    
+    
   </div>
   </div>
  <div id="tobe"></div>
@@ -162,6 +170,15 @@
       setTimeout(() => {
         // window.location.href = 'location.html';
         window.location.href = 'Gmeet.html';
+
+      }, 100); // Duration of the fade-out
+    });
+    document.getElementById('connect').addEventListener('click', () => {
+      const content = document.getElementById('contains');
+      content.classList.add('fade-out');
+      setTimeout(() => {
+        // window.location.href = 'location.html';
+        window.location.href = 'OrbitConnect.html';
 
       }, 100); // Duration of the fade-out
     });

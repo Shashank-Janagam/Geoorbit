@@ -79,9 +79,7 @@
       <div id="lc">
         <button class="cc">Create a meeting for later</button>
       </div>
-      <div class="ins">
-        <textarea id="textmessage" placeholder="Meeting purpose..?" autocomplete="off"></textarea>
-      </div>
+      
       <div id="selectMembersModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -94,6 +92,20 @@
             <button id="confirmMembersBtn">Confirm</button>
         </div>
     </div>
+    <!-- Google Meet Link Modal -->
+<div id="meetLinkModal" class="modal" style="display: none;">
+  <div class="modal-content">
+      <span class="close" onclick="document.getElementById('meetLinkModal').style.display='none'">&times;</span>
+      <h2>Enter Google Meet Link</h2>
+      <div class="ins">
+        <textarea id="textmessage" placeholder="Meeting purpose..?" autocomplete="off"></textarea>
+      </div>
+      <input type="text" id="meetLinkInput" placeholder="Paste Meet link here..." autocomplete="off">
+      <button id="saveMeetLinkBtn">Save Meeting</button>
+  </div>
+</div>
+
+
       </div>
       
 

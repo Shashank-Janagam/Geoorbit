@@ -89,6 +89,7 @@ if (signinButton) {
                        // Save UID in sessionStorage
                        sessionStorage.setItem('userEmail', user.email);
                        sessionStorage.setItem('userUID', user.uid);
+                       sessionStorage.setItem('dep',dep);
                        sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
                  
                        window.location.href="/Employee/home.html";
@@ -113,7 +114,10 @@ if (signinButton) {
           const cmpDoc=await getDoc(cmpref);
           const cmpdata=cmpDoc.data();
           const companyName=cmpdata.company;
+          const dep=cmpdata.department;
            sessionStorage.setItem('company',companyName);
+           sessionStorage.setItem('dep',dep);
+          //  sessionStorage.setItem('dep',dep);
           
            
            // Save UID in sessionStorage
