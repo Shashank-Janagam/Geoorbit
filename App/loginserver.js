@@ -60,43 +60,51 @@ if (signinButton) {
          const pmanagers= await getDocs(p);
      
          if (!querySnapshot.empty) { // If user UID exists in allowedUsers
-           console.log("User is allowed to log in.");
-     
-           const cmpref=doc(db,'allowedUsers',user.email.replace("@gmail.com",""));
-          const cmpDoc=await getDoc(cmpref);
-          const cmpdata=cmpDoc.data();
-          const companyName=cmpdata.company;
-          const dep=cmpdata.department;
-           const userRef = doc(db, `company/${companyName}/${dep}/${dep}/Employees`, user.uid);
-
-
-           // Check if the user already exists in Firestore
-           const userDoc = await getDoc(userRef);
-     
+              console.log("User is allowed to log in.");
+           
+                 const cmpref=doc(db,'allowedUsers',user.email.replace("@gmail.com",""));
+                 const cmpDoc=await getDoc(cmpref);
+                 const cmpdata=cmpDoc.data();
+                 const companyName=cmpdata.company;
+                 const dep=cmpdata.department;
+           
+                sessionStorage.setItem('company',companyName);
+                sessionStorage.setItem('dep',dep);
+           
+                 const userRef = doc(db, `company/${companyName}/${dep}/${dep}/Employees`, user.uid);
+           
+                 // Check if the user already exists in Firestore
+                 const userDoc = await getDoc(userRef);
+           
+                 // Generate the current device ID
            
                  if (userDoc.exists()) {
-                         const faceverify = await loginUser(user.uid);
-                 
-                         if (!faceverify) {
-                           // alert("Face registration failed. Please try again.");
-                           await signOut(auth);
-                           window.location.href="/index.html";
-                           return; // Stop execution if face registration fails
-                         }
-                         const userData = userDoc.data();
-                 
-                 
-                       // Save UID in sessionStorage
-                       sessionStorage.setItem('userEmail', user.email);
-                       sessionStorage.setItem('userUID', user.uid);
-                       sessionStorage.setItem('dep',dep);
-                       sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
-                 
-                       window.location.href="/Employee/home.html";
-                     
-                
-                 } 
+                   // const biometricSuccess = await verifyBiometric();
+               
+                   // if (!biometricSuccess) {
+                   //     alert("Biometric registration failed. Please try again.");
+                   //     return; // ❌ Prevent redirection if biometric fails
+                   //   }  
+                   const faceverify = await loginUser(user.uid);
            
+                   if (!faceverify) {
+                     // alert("Face registration failed. Please try again.");
+                     await signOut(auth);
+                     window.location.href="/index.html";
+                     return; // Stop execution if face registration fails
+                   }
+                   const userData = userDoc.data();
+           
+           
+                 // Save UID in sessionStorage
+                 sessionStorage.setItem('userEmail', user.email);
+                 sessionStorage.setItem('userUID', user.uid);
+                 sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
+           
+                 window.location.href="/Employee/home.html";
+               
+                
+                 }
          }
          else if(!pmanagers.empty){
      
