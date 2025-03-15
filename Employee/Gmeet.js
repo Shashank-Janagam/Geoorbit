@@ -6,7 +6,7 @@ import { getFirestore, collection,addDoc, query,updateDoc, where, getDocs, doc, 
 const firebaseConfig = {
     apiKey: "AIzaSyCib5ywnEJvXXIePdWeKZtrKMIi2-Q_9sM",
     authDomain: "geo-orbit-ed7a7.firebaseapp.com",
-    projectId: "geo-orbit-ed7a7",
+    projectId: "geo-orbit-ed7a7
     storageBucket: "geo-orbit-ed7a7.firebasestorage.app",
     messagingSenderId: "807202826514",
     appId: "1:807202826514:web:5630f581f6f9dff46aebcb",
@@ -175,7 +175,7 @@ confirmMembersBtn.addEventListener("click", async () => {
     membersObj[mdata.EmployeeID] = true;
 
     // ✅ Open the Google Meet page
-    let newMeetWindow = window.open("https://meet.google.com/new", '_blank', 'noopener,noreferrer');
+    let newMeetWindow = window.open("https://meet.google.com", '_blank', 'noopener,noreferrer');
 
     // ✅ Display the meeting link modal after confirming members
     document.getElementById("meetLinkModal").style.display = "block";
