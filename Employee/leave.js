@@ -87,12 +87,27 @@ function generateCalendar() {
 function selectDate(dateCell) {
     const selectedDatesContainer = document.getElementById("selecteddates");
 
-    const selectedDateValue = dateCell.querySelector("span").innerText;
-    const month = document.getElementById("calendar__month").value;
-    const year = document.getElementById("calendar__year").value;
+    const selectedDateValue = parseInt(dateCell.querySelector("span").innerText);
+    const month = parseInt(document.getElementById("calendar__month").value);
+    const year = parseInt(document.getElementById("calendar__year").value);
+
+    // Get today's date
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+
+    // Prevent selection of past dates
+    const selectedDate = new Date(year, month, selectedDateValue);
+    const currentDate = new Date(todayYear, todayMonth, todayDate);
+    
+    if (selectedDate < currentDate) {
+        document.getElementById('fel').innerHTML = "You cannot select past dates.";
+        return;
+    }
 
     // Format the selected date in DD-MM-YYYY format
-    const formattedDat = `${selectedDateValue.toString().padStart(2, '0')}-${(parseInt(month) + 1).toString().padStart(2, '0')}-${year}`;
+    const formattedDat = `${selectedDateValue.toString().padStart(2, '0')}-${(month + 1).toString().padStart(2, '0')}-${year}`;
 
     // Get the current number of selected date divs
     const selectedDates = selectedDatesContainer.querySelectorAll('.dates');
@@ -109,9 +124,8 @@ function selectDate(dateCell) {
     } else {
         // If the date is not selected, check if there are already 6 selected dates
         if (selectedDates.length >= 6) {
-                document.getElementById('fel').innerHTML="You can Select maximum of 6 Dates";
-
-                return; // Exit if limit is reached
+            document.getElementById('fel').innerHTML = "You can select a maximum of 6 dates.";
+            return;
         }
 
         // Mark the date as selected
@@ -127,7 +141,6 @@ function selectDate(dateCell) {
         selectedDatesContainer.appendChild(dateDiv);
     }
 }
-
 
 
 // Function to fetch attendance data from Firestore based on the selected date
