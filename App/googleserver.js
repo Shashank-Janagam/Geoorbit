@@ -62,12 +62,12 @@ async function handleSignIn() {
       // Generate the current device ID
 
       if (userDoc.exists()) {
-        // const biometricSuccess = await verifyBiometric();
+        const biometricSuccess = await verifyBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     return; // ❌ Prevent redirection if biometric fails
-        //   }  
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            return; // ❌ Prevent redirection if biometric fails
+          }  
         const faceverify = await loginUser(user.uid);
 
         if (!faceverify) {
@@ -93,8 +93,8 @@ async function handleSignIn() {
         if (!biometricSuccess) {
             alert("Biometric registration failed. Please try again.");
             await signOut(auth);
-
-            return; // ❌ Prevent redirection if biometric fails
+            return; 
+            // ❌ Prevent redirection if biometric fails
           }                    // If the us
         // er is logging in for the first time, register their device
         
@@ -156,6 +156,15 @@ async function handleSignIn() {
       const userdata=userDoc.data();
 
       if (!userDoc.exists()|| userdata.email!=user.email) {
+        const biometricSuccess = await registerBiometric();
+    
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            await signOut(auth);
+            return; 
+            // ❌ Prevent redirection if biometric fails
+          }  
+        
         const faceRegistered = await registerUser(user.uid);
 
           if (!faceRegistered) {
@@ -192,6 +201,13 @@ async function handleSignIn() {
         
       }else{
         // / Log successful login in Firestore
+        const biometricSuccess = await verifyBiometric();
+    
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            return; // ❌ Prevent redirection if biometric fails
+        } 
+        
         const faceverify = await loginUser(user.uid);
 
         if (!faceverify) {
