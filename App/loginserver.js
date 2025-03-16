@@ -238,6 +238,7 @@ async function verifyBiometric() {
       return false;
   }
 
+  const storedCredentialID = userDoc.data().credentialID;
 
   const challenge = new Uint8Array(32);
   window.crypto.getRandomValues(challenge);
@@ -274,8 +275,9 @@ async function verifyBiometric() {
       }
 
       console.log("Biometric verification successful!");
+      // window.location.href = "/Employee/home.html";
+      //       //  ✅ Redirect after success
       sessionStorage.setItem("lastAuthTime", Date.now()); // Update last authentication time
-      window.location.href = "/Employee/home.html"; // ✅ Redirect after success
       return true;
   } catch (error) {
       console.error("Biometric authentication failed:", error);
