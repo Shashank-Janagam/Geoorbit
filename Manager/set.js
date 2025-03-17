@@ -33,7 +33,7 @@ async function fetchUserData() {
         if (userDoc.data().email!=user.email){
         window.location.href="/index.html";
         }
-        return 0;
+        return userDoc.data();
     }
   }
 }
@@ -42,11 +42,10 @@ async function fetchUserData() {
 let map;
 let polygon;
 let markers = [];
-const userData =  fetchUserData(); // Fetch user data before checking
 
 
 // Initialize map after page load
-function initMap() {
+// function initMap() {
   console.log('initMap function is being called');
   const defaultLocation = { lat: 0, lng: 0 };
   
@@ -96,7 +95,7 @@ function initMap() {
       }
     }
   });
-}
+// }
 
 function addMarker(location) {
   const marker = new google.maps.Marker({
@@ -135,7 +134,7 @@ async function saveCoordinatesToDatabase(coords) {
     });
     const company=sessionStorage.getItem('company');
     const dep=sessionStorage.getItem('dep');
-    alert(dep);
+    // alert(dep);
     const docRef = doc(db, `company/${company}/${dep}/${dep}/Location`, "PolygonData");
     await setDoc(docRef, polygonData);
 
@@ -157,7 +156,7 @@ function printCoordinates(coords) {
 }
 
 // Wait until the window is loaded to initialize the map
-window.onload = function() {
-  initMap();
-};
+// window.onload = function() {
+//   initMap();
+// };
   });

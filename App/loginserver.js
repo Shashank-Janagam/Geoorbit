@@ -109,22 +109,22 @@ if (signinButton) {
          else if(!pmanagers.empty){
      
            console.log("Manager is allowed to log in.");
-           const biometricSuccess = await verifyBiometric();
+          //  const biometricSuccess = await verifyBiometric();
                
-           if (!biometricSuccess) {
-               alert("Biometric registration failed. Please try again.");
-               return; // ❌ Prevent redirection if biometric fails
-             }  
-           const faceverify = await loginUser(user.uid);
+          //  if (!biometricSuccess) {
+          //      alert("Biometric registration failed. Please try again.");
+          //      return; // ❌ Prevent redirection if biometric fails
+          //    }  
+          //  const faceverify = await loginUser(user.uid);
 
 
-           if (!faceverify) {
-             // alert("Face registration failed. Please try again.");
-             await signOut(auth);
-             window.location.href="/index.html";
+          //  if (!faceverify) {
+          //    // alert("Face registration failed. Please try again.");
+          //    await signOut(auth);
+          //    window.location.href="/index.html";
 
-             return; // Stop execution if face registration fails
-           }
+          //    return; // Stop execution if face registration fails
+          //  }
            const cmpref=doc(db,'allowedManagers',user.email.replace("@gmail.com",""));
           const cmpDoc=await getDoc(cmpref);
           const cmpdata=cmpDoc.data();

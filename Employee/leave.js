@@ -68,21 +68,26 @@ function generateCalendar() {
     }
 
     // Add the actual dates of the month
-    for (let day = 1; day <= lastDate; day++) {
-        const dateCell = document.createElement("div");
-        dateCell.classList.add("calendar__date");
+    // Inside the loop that generates calendar dates
+for (let day = 1; day <= lastDate; day++) {
+    const dateCell = document.createElement("div");
+    dateCell.classList.add("calendar__date");
 
-        // Check if the current date is today's date and highlight it
-        if (day === todayDate && month == todayMonth && year == todayYear) {
-            dateCell.classList.add("calendar__date--today");
-        }
+    const selectedDate = new Date(year, month, day);
+    const currentDate = new Date(todayYear, todayMonth, todayDate);
 
-        dateCell.innerHTML = `<span>${day}</span>`;
+    if (selectedDate < currentDate) {
+        dateCell.classList.add("calendar__date--disabled"); // Apply a disabled style
+    } else {
         dateCell.addEventListener("click", function () {
             selectDate(dateCell);
         });
-        calendarDates.appendChild(dateCell);
     }
+
+    dateCell.innerHTML = `<span>${day}</span>`;
+    calendarDates.appendChild(dateCell);
+}
+
 }
 function selectDate(dateCell) {
     const selectedDatesContainer = document.getElementById("selecteddates");
