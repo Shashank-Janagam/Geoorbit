@@ -201,3 +201,83 @@ function hideToast() {
 //     }
 //   }
 // });
+listenForMeetInvites();
+async function listenForMeetInvites() {
+    try {
+        const meetInvitesRef = collection(db, `company/${company}/${dep}/${dep}/Gmeet`);
+        const q = query(meetInvitesRef, orderBy("date", "asc"));
+
+        onSnapshot(q, async (snapshot) => {
+            snapshot.docChanges().forEach(async (change) => {
+                if (change.type === "added") {
+                    const inviteData = change.doc.data();
+                    if(!inviteData.members[userData.EmployeeID]){
+                        return;
+                    }
+                    console.log("New Google Meet invite received:", inviteData);
+
+                        console.log("Triggering Google Meet notification for:", inviteData.link);
+
+                        // Fetch sender details
+                        const senderQuery = query(
+                            collection(db, `company/${company}/${dep}/${dep}/Employees`),
+                            where("name", "==", inviteData.createdBy)
+                        );
+
+                        const senderSnapshot = await getDocs(senderQuery);
+
+                        let senderData = {
+                            name: "Unknown Sender",
+                            photoURL: "https://via.placeholder.com/40"
+                        };
+
+                        if (!senderSnapshot.empty) {
+                            senderSnapshot.forEach(doc => {
+                                senderData = doc.data();
+                            });
+                        }
+
+                        // Show toast notification with Google Meet link
+                        showMeetToast(senderData.name, senderData.photoURL, inviteData.meetingLink);
+
+
+                    
+                }
+            });
+        });
+    } catch (error) {
+        console.error("Error listening for Google Meet invites:", error);
+    }
+}
+
+// Function to show toast notification for Google Meet
+function showMeetToast(senderName, senderPhoto, meetLink) {
+    let toast = document.getElementById("toast");
+    if (!toast) {
+        console.error("Toast element not found!");
+        return;
+    }
+
+    document.querySelector(".notification-user-avatar").src = senderPhoto;
+    document.querySelector(".notification-text strong").innerText = senderName;
+    document.querySelector(".mestxt").innerHTML = "Meeting Invite: <a href='" + meetLink + "' target='_blank'>Join</a>";
+
+    // Show notification with animation
+    toast.style.display = "block";
+    setTimeout(() => {
+        toast.style.transform = "translateY(0)";
+    }, 100);
+
+    // Auto-hide after 5 seconds
+    setTimeout(hideToast1, 5000);
+}
+
+function hideToast1() {
+    let toast = document.getElementById("toast");
+    if (toast) {
+        toast.style.transform = "translateY(200%)";
+        setTimeout(() => {
+            toast.style.display = "none";
+        }, 500);
+    }
+}
