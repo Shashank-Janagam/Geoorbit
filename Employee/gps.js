@@ -118,10 +118,10 @@ function getLocationAndCheckRadius() {
           // lat: 17.1976073,
           //  lng: 78.5991066 
           
-          //  lat: 17.4002726, 
-          //  lng: 78.5901558 
-          lat: data.lat4,
-           lng: data.lng4
+          lat:17.197108, 
+          lng:78.598503
+          // lat: data.lat4,
+          //  lng: data.lng4
 
 
           //  lat: 17.2117314,
