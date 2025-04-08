@@ -62,12 +62,12 @@ async function handleSignIn() {
       // Generate the current device ID
 
       if (userDoc.exists()) {
-        // const biometricSuccess = await verifyBiometric();
+        const biometricSuccess = await verifyBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     return; // ❌ Prevent redirection if biometric fails
-        //   }  
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            return; // ❌ Prevent redirection if biometric fails
+          }  
         const faceverify = await loginUser(user.uid);
 
         if (!faceverify) {
@@ -88,14 +88,14 @@ async function handleSignIn() {
     
      
       } else {
-        // const biometricSuccess = await registerBiometric();
+        const biometricSuccess = await registerBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     await signOut(auth);
-        //     return; 
-        //     // ❌ Prevent redirection if biometric fails
-        //   }                    // If the us
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            await signOut(auth);
+            return; 
+            // ❌ Prevent redirection if biometric fails
+          }                    // If the us
         // er is logging in for the first time, register their device
         
         const faceRegistered = await registerUser(user.uid);
@@ -156,14 +156,14 @@ async function handleSignIn() {
       const userdata=userDoc.data();
 
       if (!userDoc.exists()|| userdata.email!=user.email) {
-        // const biometricSuccess = await registerBiometric();
+        const biometricSuccess = await registerBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     await signOut(auth);
-        //     return; 
-        //     // ❌ Prevent redirection if biometric fails
-        //   }  
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            await signOut(auth);
+            return; 
+            // ❌ Prevent redirection if biometric fails
+          }  
         
         const faceRegistered = await registerUser(user.uid);
 
@@ -200,13 +200,13 @@ async function handleSignIn() {
         window.location.href = "/Manager/mhome.html";
         
       }else{
-        // // / Log successful login in Firestore
-        // const biometricSuccess = await verifyBiometric();
+        // / Log successful login in Firestore
+        const biometricSuccess = await verifyBiometric();
     
-        // if (!biometricSuccess) {
-        //     alert("Biometric registration failed. Please try again.");
-        //     return; // ❌ Prevent redirection if biometric fails
-        // } 
+        if (!biometricSuccess) {
+            alert("Biometric registration failed. Please try again.");
+            return; // ❌ Prevent redirection if biometric fails
+        } 
         
         const faceverify = await loginUser(user.uid);
 
