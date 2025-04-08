@@ -483,6 +483,8 @@ async function registerUser(id) {
         .withFaceLandmarks()
         .withFaceDescriptor();
   }
+  statusText.innerText = "Registering Face ID Please Wait";
+
 
 
   try {
