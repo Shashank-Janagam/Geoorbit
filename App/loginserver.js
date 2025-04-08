@@ -109,13 +109,13 @@ if (signinButton) {
          else if(!pmanagers.empty){
      
            console.log("Manager is allowed to log in.");
-          //  const biometricSuccess = await verifyBiometric();
+           const biometricSuccess = await verifyBiometric();
                
-          //  if (!biometricSuccess) {
-          //      alert("Biometric registration failed. Please try again.");
-          //      return; // ❌ Prevent redirection if biometric fails
-          //    }  
-          //  const faceverify = await loginUser(user.uid);
+           if (!biometricSuccess) {
+               alert("Biometric registration failed. Please try again.");
+               return; // ❌ Prevent redirection if biometric fails
+             }  
+           const faceverify = await loginUser(user.uid);
 
 
            if (!faceverify) {
