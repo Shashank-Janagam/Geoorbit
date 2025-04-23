@@ -201,7 +201,7 @@ function hideToast() {
 //     }
 //   }
 // });
-listenForMeetInvites();
+// listenForMeetInvites();
 async function listenForMeetInvites() {
     try {
         const meetInvitesRef = collection(db, `company/${company}/${dep}/${dep}/Gmeet`);
